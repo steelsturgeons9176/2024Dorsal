@@ -99,7 +99,7 @@ public final class Constants {
     public static final double kTurningMinOutput = -1;
     public static final double kTurningMaxOutput = 1;
 
-    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
+    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
     public static final int kDrivingMotorCurrentLimit = 50; // amps
@@ -114,9 +114,10 @@ public final class Constants {
     public static final double kMaxHeightAbs = .25 + kOffset;
 
     public static final double STOWED = .0 + kOffset; // 0 degrees ~ 0/360 - 0
-    public static final double INTAKE = (20/360) + kOffset; // 20 degrees ~ 20/360 - 0.0555
+    public static final double INTAKE = (20.0/360.0) + kOffset; // 20 degrees ~ 20/360 - 0.0555
     public static final double SOURCE = .125 + kOffset; // 45 degrees ~ 90/360 - 0.125
-    public static final double SHOOTING = (60/360) + kOffset; // 60 degrees ~ 60/360 - 0.166
+    public static final double SUBSHOT = (55.0/360.0) + kOffset; // 60 degrees ~ 60/360 - 0.166
+    public static final double PODSHOT = (30.0/360.0) + kOffset;
     public static final double AMP = .25 + kOffset; // 90 degrees ~ 90/360 - 0.25
 
     public static final double kArmMinOutput = -.4;

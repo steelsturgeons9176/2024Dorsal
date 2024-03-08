@@ -13,6 +13,7 @@ public class IndexerSubsystem extends SubsystemBase {
         m_indexer.setInverted(false);
         m_indexer.setNeutralMode(NeutralModeValue.Coast);
         m_indexer.setVoltage(12);
+        m_indexer.set(0);
     }
 
     public void runIntake(double speed) {

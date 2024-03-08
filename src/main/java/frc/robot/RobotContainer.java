@@ -13,10 +13,17 @@ import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.backpack.RunBackpack;
 import frc.robot.commands.climb.RunClimb;
 import frc.robot.commands.descend.RunDescend;
+import frc.robot.commands.feeder.ReverseFeeder;
 import frc.robot.commands.feeder.RunFeeder;
-import frc.robot.commands.indexer.RunIndexer;
+import frc.robot.commands.indexer.RunIndexerAmp;
+import frc.robot.commands.indexer.RunIndexerShooter;
 import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.intake.RunIntakeUnjam;
+import frc.robot.commands.manipCommands.feedToIndexer;
+import frc.robot.commands.manipCommands.manipIntake;
+import frc.robot.commands.manipCommands.stowArm;
 import frc.robot.commands.shooter.RunShooter;
+import frc.robot.commands.shooter.RunShooterReverse;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BackpackSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -25,11 +32,18 @@ import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ArmSubsystem.armPositions;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+
+import javax.naming.PartialResultException;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -49,10 +63,12 @@ public class RobotContainer {
   public final ShooterSubsystem m_shooter = new ShooterSubsystem();
   public final IndexerSubsystem m_indexer = new IndexerSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
-  public final Joystick m_manipController = new Joystick(1);
+  
 
   // The driver's controller
   private final CommandXboxController m_driverController = new CommandXboxController(0);
+
+  public final CommandJoystick m_manipController = new CommandJoystick(1);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -90,14 +106,14 @@ public class RobotContainer {
 
   public final void shootNote() {
     new RunShooter(m_shooter);
-    new RunIndexer(m_indexer);
+    new RunIndexerShooter(m_indexer);
   }
 
   public final void intakeNode() {
     new ArmToPosition(m_arm, ArmSubsystem.armPositions.INTAKE);
 
     new RunIntake(m_intake);
-    new RunIndexer(m_indexer);
+    new RunIndexerShooter(m_indexer);
     new RunFeeder(m_feeder);
   }
 
@@ -126,10 +142,42 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new POVButton(m_manipController, 180).whileTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.SHOOTING));
-    new POVButton(m_manipController, 270).whileTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.AMP));
-    new POVButton(m_manipController, 0).whileTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.STOWED));
-    new POVButton(m_manipController, 90).whileTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.SOURCE));
-    new JoystickButton(m_manipController, 6).whileTrue(new RunFeeder(m_feeder));
+    m_driverController.x().onTrue(new InstantCommand(() -> m_robotDrive.zeroHaw()));
+    //m_manipController.button(5).whileTrue(new manipIntake(m_arm, m_intake, m_feeder, m_indexer));
+    //m_manipController.button(6).whileTrue(new stowArm(m_arm));
+
+    //m_manipController.button(4).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.INTAKE));
+    //m_manipController.button(2).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.AMP));
+    //m_manipController.button(1).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.STOWED));
+    //m_manipController.button(3).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.SOURCE));
+    //Intake Note
+    m_driverController.button(6).whileTrue(new ParallelCommandGroup(new RunIntake(m_intake), new RunFeeder(m_feeder), new ArmToPosition(m_arm, armPositions.INTAKE)));
+    //Stow arm
+    m_driverController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.STOWED));
+
+
+    //Intake from source
+    m_manipController.button(1).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SOURCE), new RunIndexerAmp(m_indexer), new RunShooterReverse(m_shooter)));
+    //Stow arm
+    m_manipController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.STOWED));
+    //Shoot into speaker from sub
+    m_manipController.button(2).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SUBSHOT), 
+    new RunShooter(m_shooter))).and(m_manipController.button(6).whileTrue(new SequentialCommandGroup
+    (new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)))));
+    //Shoot into speaker from pod
+    m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), 
+    new RunShooter(m_shooter))).and(m_manipController.button(6).whileTrue(new SequentialCommandGroup
+    (new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)))));
+
+    //Unjam deadzone
+    m_manipController.pov(0).whileTrue(new ParallelCommandGroup(new ReverseFeeder(m_feeder), new ArmToPosition(m_arm, armPositions.AMP)));
+    //Unjam intake
+    m_manipController.pov(90).whileTrue(new ParallelCommandGroup(new RunIntakeUnjam(m_intake), new ArmToPosition(m_arm, armPositions.INTAKE), new ReverseFeeder(m_feeder)));
+    //Unjam  shooter
+    m_manipController.pov(180).whileTrue(new ParallelCommandGroup(new RunShooterReverse(m_shooter), new RunIndexerAmp(m_indexer)));
+
+    //m_manipController.button(5).whileTrue(new InstantCommand( )
+    //m_manipController.button(5).whileTrue(new RunIndexer(m_indexer));
+    //m_manipController.button(2).whileTrue(new RunIntake(m_intake));
   }
 }

@@ -3,10 +3,10 @@ package frc.robot.commands.indexer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
 
-public class RunIndexer extends Command {
+public class RunIndexerAmp extends Command {
     private IndexerSubsystem m_indexer;
 
-    public RunIndexer(IndexerSubsystem indexer) {
+    public RunIndexerAmp(IndexerSubsystem indexer) {
         m_indexer = indexer;
 
         addRequirements(m_indexer);
@@ -14,7 +14,7 @@ public class RunIndexer extends Command {
 
     @Override
     public void execute() {
-        m_indexer.runIntake(1);
+        m_indexer.runIntake(-1);
     }
 
     @Override

@@ -13,6 +13,7 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intake.setInverted(false);
         m_intake.setNeutralMode(NeutralModeValue.Coast);
         m_intake.setVoltage(12);
+        m_intake.set(0);
     }
 
     public void runIntake(double speed) {

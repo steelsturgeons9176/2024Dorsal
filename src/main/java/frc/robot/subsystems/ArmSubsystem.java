@@ -22,7 +22,8 @@ public class ArmSubsystem extends SubsystemBase {
         AMP, 
         INTAKE,
         SOURCE,
-        SHOOTING
+        SUBSHOT,
+        PODSHOT
     }
 
     private final CANSparkMax m_armRight = new CANSparkMax(NeoMotorConstants.kArmRightDeviceId, MotorType.kBrushless);
@@ -42,7 +43,8 @@ public class ArmSubsystem extends SubsystemBase {
         mapAbs.put(armPositions.STOWED, ArmConstants.STOWED);
         mapAbs.put(armPositions.AMP, ArmConstants.AMP);
         mapAbs.put(armPositions.SOURCE, ArmConstants.SOURCE);
-        mapAbs.put(armPositions.SHOOTING, ArmConstants.SHOOTING);
+        mapAbs.put(armPositions.SUBSHOT, ArmConstants.SUBSHOT);
+        mapAbs.put(armPositions.PODSHOT, ArmConstants.PODSHOT);
         mapAbs.put(armPositions.INTAKE, ArmConstants.INTAKE);
 
         m_armRight.setInverted(true);
@@ -83,7 +85,57 @@ public class ArmSubsystem extends SubsystemBase {
 
     }
 
-    public void raiseArmAbs(armPositions position){
+    public boolean raiseArmAbs(armPositions position){
+        if (((armAbsEncoder.getPosition() < ArmConstants.kMinHeightAbs) && (position == armPositions.STOWED)) ||
+            ((armAbsEncoder.getPosition() > ArmConstants.kMaxHeightAbs) && (position == armPositions.AMP))) {
+            m_armRight.set(0);
+            return false;
+        }
+
+        // For LVLTRE, LVLTWO, and HOME
+        switch (position) {
+            case AMP:
+                m_AbsPidController.setP(2.7);
+                m_AbsPidController.setI(.2);
+                m_AbsPidController.setD(0);
+            case SUBSHOT:
+                m_AbsPidController.setP(2.7);
+                m_AbsPidController.setI(.2);
+                m_AbsPidController.setD(0);
+            case STOWED:
+                m_AbsPidController.setP(1.3);
+                m_AbsPidController.setI(.2);
+                m_AbsPidController.setD(0);
+                break;
+        // For LVLONE and CONESTOW
+            case SOURCE:
+                m_AbsPidController.setP(2.7);
+                m_AbsPidController.setI(.2);
+                m_AbsPidController.setD(0);
+            default:
+                m_AbsPidController.setP(2.7);
+                m_AbsPidController.setI(.2);
+                m_AbsPidController.setD(0);
+                break;
+        }
+
+        double ref = mapAbs.get(position);
+
+        double pidOut = MathUtil.clamp(
+            m_AbsPidController.calculate(armAbsEncoder.getPosition(),ref),
+            Constants.ArmConstants.kArmMinOutput, Constants.ArmConstants.kArmMaxOutput);
+            
+        SmartDashboard.putNumber("Arm Abs Target Pos", ref);
+        m_armRight.set(pidOut);
+        if(atPosition(position))
+        {
+            return false;
+        }
+        return false;
+    }
+
+    public void holdArm(armPositions position)
+    {
         if (((armAbsEncoder.getPosition() < ArmConstants.kMinHeightAbs) && (position == armPositions.STOWED)) ||
             ((armAbsEncoder.getPosition() > ArmConstants.kMaxHeightAbs) && (position == armPositions.AMP))) {
             m_armRight.set(0);
@@ -96,7 +148,7 @@ public class ArmSubsystem extends SubsystemBase {
                 m_AbsPidController.setP(2);
                 m_AbsPidController.setI(.5);
                 m_AbsPidController.setD(.1);
-            case SHOOTING:
+            case SUBSHOT:
                 m_AbsPidController.setP(2);
                 m_AbsPidController.setI(.5);
                 m_AbsPidController.setD(.1);
@@ -122,14 +174,7 @@ public class ArmSubsystem extends SubsystemBase {
         double pidOut = MathUtil.clamp(
             m_AbsPidController.calculate(armAbsEncoder.getPosition(),ref),
             Constants.ArmConstants.kArmMinOutput, Constants.ArmConstants.kArmMaxOutput);
-            
-        SmartDashboard.putNumber("Arm Abs Target Pos", ref);
         m_armRight.set(pidOut);
-        if(atPosition(position))
-        {
-            noArmPower();
-            return;
-        }
     }
 
     public boolean atPosition(armPositions pos){
