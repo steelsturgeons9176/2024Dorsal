@@ -89,7 +89,7 @@ public class ArmSubsystem extends SubsystemBase {
         if (((armAbsEncoder.getPosition() < ArmConstants.kMinHeightAbs) && (position == armPositions.STOWED)) ||
             ((armAbsEncoder.getPosition() > ArmConstants.kMaxHeightAbs) && (position == armPositions.AMP))) {
             m_armRight.set(0);
-            return false;
+            return true;
         }
 
         // For LVLTRE, LVLTWO, and HOME
@@ -100,7 +100,7 @@ public class ArmSubsystem extends SubsystemBase {
                 m_AbsPidController.setD(0);
             case SUBSHOT:
                 m_AbsPidController.setP(2.7);
-                m_AbsPidController.setI(.2);
+                m_AbsPidController.setI(.5);
                 m_AbsPidController.setD(0);
             case STOWED:
                 m_AbsPidController.setP(1.3);
@@ -129,7 +129,7 @@ public class ArmSubsystem extends SubsystemBase {
         m_armRight.set(pidOut);
         if(atPosition(position))
         {
-            return false;
+            return true;
         }
         return false;
     }

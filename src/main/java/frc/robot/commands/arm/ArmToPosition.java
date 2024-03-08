@@ -41,14 +41,15 @@ public class ArmToPosition extends Command {
 
     @Override
     public boolean isFinished(){
-        if(reachedTarget)
-        {
-            return true;
-        }
+        //if(reachedTarget)
+        //{
+        //    return true;
+        //}
         return false;
     }
 
     @Override
     public void end(boolean isInterrupted){
+        //if (!m_keepRunning) m_arm.noArmPower();
     }
 }

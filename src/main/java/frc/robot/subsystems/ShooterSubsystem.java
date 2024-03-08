@@ -14,10 +14,12 @@ public class ShooterSubsystem extends SubsystemBase {
         m_shooterleft.setInverted(true);
         m_shooterleft.setNeutralMode(NeutralModeValue.Coast);
         m_shooterleft.setVoltage(12);
+        m_shooterleft.set(0);
 
         m_shooterright.setInverted(false);
         m_shooterright.setNeutralMode(NeutralModeValue.Coast);
         m_shooterright.setVoltage(12);
+        m_shooterright.set(0);
     }
 
     public void runShooter(double speed) {

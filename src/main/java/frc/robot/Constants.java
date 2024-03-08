@@ -120,9 +120,9 @@ public final class Constants {
     public static final double PODSHOT = (30.0/360.0) + kOffset;
     public static final double AMP = .25 + kOffset; // 90 degrees ~ 90/360 - 0.25
 
-    public static final double kArmMinOutput = -.4;
-    public static final double kArmMaxOutput = .4;
-    public static final double kAllowedErrAbs = .005;
+    public static final double kArmMinOutput = -.07;
+    public static final double kArmMaxOutput = .07;
+    public static final double kAllowedErrAbs = .008;
   }
 
   public static final class OIConstants {

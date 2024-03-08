@@ -55,7 +55,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final ArmSubsystem m_arm = new ArmSubsystem();
   public final BackpackSubsystem m_backpack = new BackpackSubsystem();
   public final ClimbSubsystem m_climb = new ClimbSubsystem();
@@ -142,7 +142,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_driverController.x().onTrue(new InstantCommand(() -> m_robotDrive.zeroHaw()));
+    //m_driverController.x().onTrue(new InstantCommand(() -> m_robotDrive.zeroHaw()));
     //m_manipController.button(5).whileTrue(new manipIntake(m_arm, m_intake, m_feeder, m_indexer));
     //m_manipController.button(6).whileTrue(new stowArm(m_arm));
 
@@ -151,28 +151,28 @@ public class RobotContainer {
     //m_manipController.button(1).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.STOWED));
     //m_manipController.button(3).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.SOURCE));
     //Intake Note
-    m_driverController.button(6).whileTrue(new ParallelCommandGroup(new RunIntake(m_intake), new RunFeeder(m_feeder), new ArmToPosition(m_arm, armPositions.INTAKE)));
+    //m_driverController.button(6).whileTrue(new ParallelCommandGroup(new RunIntake(m_intake), new RunFeeder(m_feeder), new ArmToPosition(m_arm, armPositions.INTAKE)));
     //Stow arm
-    m_driverController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.STOWED));
+    //m_driverController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.STOWED));
 
 
     //Intake from source
-    m_manipController.button(1).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SOURCE), new RunIndexerAmp(m_indexer), new RunShooterReverse(m_shooter)));
+    //m_manipController.button(1).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SOURCE), new RunIndexerAmp(m_indexer), new RunShooterReverse(m_shooter)));
     //Stow arm
     m_manipController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.STOWED));
     //Shoot into speaker from sub
     m_manipController.button(2).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SUBSHOT), 
-    new RunShooter(m_shooter))).and(m_manipController.button(6).whileTrue(new SequentialCommandGroup
-    (new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)))));
+    new RunShooter(m_shooter))).onFalse(new ArmToPosition(m_arm, armPositions.SUBSHOT));//.and(m_manipController.button(6)).whileTrue(new SequentialCommandGroup
+    //(new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer))));
     //Shoot into speaker from pod
-    m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), 
-    new RunShooter(m_shooter))).and(m_manipController.button(6).whileTrue(new SequentialCommandGroup
-    (new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)))));
+    //m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), 
+    //new RunShooter(m_shooter))).and(m_manipController.button(6).whileTrue(new SequentialCommandGroup
+    //(new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)))));
 
     //Unjam deadzone
-    m_manipController.pov(0).whileTrue(new ParallelCommandGroup(new ReverseFeeder(m_feeder), new ArmToPosition(m_arm, armPositions.AMP)));
+    m_manipController.pov(0).whileTrue(new ParallelCommandGroup(new ReverseFeeder(m_feeder), new ArmToPosition(m_arm, armPositions.AMP))).onFalse(new ArmToPosition(m_arm, armPositions.AMP));
     //Unjam intake
-    m_manipController.pov(90).whileTrue(new ParallelCommandGroup(new RunIntakeUnjam(m_intake), new ArmToPosition(m_arm, armPositions.INTAKE), new ReverseFeeder(m_feeder)));
+    m_manipController.pov(90).whileTrue(new ParallelCommandGroup(new RunIntakeUnjam(m_intake), new ArmToPosition(m_arm, armPositions.INTAKE), new ReverseFeeder(m_feeder))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
     //Unjam  shooter
     m_manipController.pov(180).whileTrue(new ParallelCommandGroup(new RunShooterReverse(m_shooter), new RunIndexerAmp(m_indexer)));
 
