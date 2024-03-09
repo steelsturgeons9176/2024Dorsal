@@ -14,7 +14,7 @@ public class RunIndexerAmp extends Command {
 
     @Override
     public void execute() {
-        m_indexer.runIntake(-1);
+        m_indexer.RunIndexer(-1);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class RunIndexerAmp extends Command {
 
     @Override
     public void end(boolean isInterrupted) {
-        m_indexer.runIntake(0);
+        m_indexer.RunIndexer(0);
 
     }
 }

@@ -27,14 +27,18 @@ public class feedToIndexer extends Command {
         m_time = Timer.getFPGATimestamp();
     }
 
+    public double getTime() {
+        return Timer.getFPGATimestamp() - m_time;
+      }
+
     @Override
     public void execute() {
-        new ReverseFeeder(m_feeder);
+        m_feeder.runFeeder(-1);
     }
 
     @Override
     public boolean isFinished() {
-        if(m_time + .1 >= Timer.getFPGATimestamp())
+        if(getTime() >= .04f)
         {
             return true; 
         }

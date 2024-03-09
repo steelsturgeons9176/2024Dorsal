@@ -9,11 +9,16 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.NeoMotorConstants;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -31,12 +36,24 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final AbsoluteEncoder armAbsEncoder = m_armRight.getAbsoluteEncoder(Type.kDutyCycle);
 
-    private final PIDController m_AbsPidController = new PIDController(0.0, 0.0, 0.0);
+    private final PIDController m_AbsPidController = new PIDController(2, 0.0, 0.0);
+
+    private final ArmFeedforward ff =
+    new ArmFeedforward(
+        8.4, 0,
+        0, 22.9);
+
+    //private final TrapezoidProfile  profile = new TrapezoidProfile (
+    //    2.5, 0, 0,
+    //    new TrapezoidProfile.Constraints(2 * Math.PI, 15));
+
+    private final TrapezoidProfile profile;
 
     EnumMap<armPositions, Double> mapAbs = new EnumMap<>(armPositions.class);
 
     double m_speed = 0.0;
 
+private TrapezoidProfile.State setpointState = new TrapezoidProfile.State();
 
     public ArmSubsystem () {
 
@@ -56,6 +73,11 @@ public class ArmSubsystem extends SubsystemBase {
         m_armLeft.follow(m_armRight, true);
 
         m_AbsPidController.enableContinuousInput(0, 1);
+
+        profile =
+        new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(2 * Math.PI, 15));
+        //io.setPID(kP.get(), kI.get(), kD.get());
 
 
         m_armRight.burnFlash();
@@ -99,7 +121,7 @@ public class ArmSubsystem extends SubsystemBase {
                 m_AbsPidController.setI(.2);
                 m_AbsPidController.setD(0);
             case SUBSHOT:
-                m_AbsPidController.setP(2.7);
+                m_AbsPidController.setP(4);
                 m_AbsPidController.setI(.5);
                 m_AbsPidController.setD(0);
             case STOWED:
@@ -121,9 +143,22 @@ public class ArmSubsystem extends SubsystemBase {
 
         double ref = mapAbs.get(position);
 
+        //setpointState =
+        //  profile.calculate(
+        //      GlobalConstants.loopPeriodSecs,
+        //      setpointState,
+        //      new TrapezoidProfile.State(
+        //          MathUtil.clamp(
+        //              ref,
+        //              Constants.ArmConstants.kMinHeightAbs,
+         //             Constants.ArmConstants.kMaxHeightAbs),
+         //         0.0));
+
         double pidOut = MathUtil.clamp(
             m_AbsPidController.calculate(armAbsEncoder.getPosition(),ref),
             Constants.ArmConstants.kArmMinOutput, Constants.ArmConstants.kArmMaxOutput);
+
+        //m_armRight.
             
         SmartDashboard.putNumber("Arm Abs Target Pos", ref);
         m_armRight.set(pidOut);
