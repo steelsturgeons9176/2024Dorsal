@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
@@ -36,12 +37,14 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ArmSubsystem.armPositions;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
@@ -159,6 +162,34 @@ public class RobotContainer {
 
     m_driverController.button(2).whileTrue(new findColor(m_indexer));
 
+    Trigger readyToShoot = 
+      new Trigger(
+      () -> m_shooter.atGoal() && m_arm.atPosition());
+
+    m_manipController
+        .button(2)
+        .and(readyToShoot)
+        .whileTrue(
+            Commands.startEnd(
+                () -> {
+                  m_manipController.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
+                },
+                () -> {
+                  m_manipController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+                }));
+    
+                
+    m_manipController
+        .button(3)
+        .and(readyToShoot)
+        .whileTrue(
+            Commands.startEnd(
+                () -> {
+                  m_manipController.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
+                },
+                () -> {
+                  m_manipController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+                }));
 
     //Intake from source
     m_manipController.button(1).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SOURCE), new RunIndexerAmp(m_indexer), new RunShooterReverse(m_shooter)));
@@ -166,10 +197,10 @@ public class RobotContainer {
     m_manipController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.INTAKE));
     //Shoot into speaker from sub
     m_manipController.button(2).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SUBSHOT), 
-    new RunShooter(m_shooter))).onFalse(new ArmToPosition(m_arm, armPositions.SUBSHOT));//.and(m_manipController.button(6)).whileTrue(new SequentialCommandGroup
+    m_shooter.shootCommand())).onFalse(new ArmToPosition(m_arm, armPositions.SUBSHOT));//.and(m_manipController.button(6)).whileTrue(new SequentialCommandGroup
     //(new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer))));
 
-    m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), new RunShooter(m_shooter))).onFalse(new ArmToPosition(m_arm, armPositions.PODSHOT));
+    m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), m_shooter.shootCommand())).onFalse(new ArmToPosition(m_arm, armPositions.PODSHOT));
     //Shoot into speaker from pod
     //m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), 
     //new RunShooter(m_shooter))).and(m_manipController.button(6).whileTrue(new SequentialCommandGroup

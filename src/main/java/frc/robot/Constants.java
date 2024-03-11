@@ -122,7 +122,26 @@ public final class Constants {
 
     public static final double kArmMinOutput = -.4;
     public static final double kArmMaxOutput = .4;
-    public static final double kAllowedErrAbs = .008;
+    public static final double kAllowedErrAbs = .005;
+  }
+
+  public static final class ShooterConstants {
+    public static final double kP = .25;
+    public static final double kD = .0012;
+    public static final double kS = .50719;
+    public static final double kV = .00180;
+
+    public static final double idleLeftRpm = 200.0;
+    public static final double idleRightRpm = 200.0;
+
+    public static final double shootingLeftRpm = 6000.0;
+    public static final double shootingRightRpm = 4000.0;
+
+    public static final double intakingRpm = -2000.0;
+    public static final double ejectingRpm = 1000.0;
+
+    public static final double maxAcclerationRpmPerSec = 9000.0;
+    public static final double prepareShootMultiplier = .75;
   }
 
   public static final class OIConstants {

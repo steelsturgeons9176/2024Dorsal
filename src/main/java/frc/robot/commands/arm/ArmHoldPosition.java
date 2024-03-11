@@ -36,7 +36,7 @@ public class ArmHoldPosition extends Command {
 
     @Override
     public void execute(){
-       m_arm.holdArm(m_targetPos);
+       //m_arm.holdArm(m_targetPos);
     }
 
     @Override
