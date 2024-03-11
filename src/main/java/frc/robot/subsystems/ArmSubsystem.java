@@ -163,49 +163,6 @@ public class ArmSubsystem extends SubsystemBase {
         return false;
     }
 
-    public void holdArm(armPositions position)
-    {
-        if (((armAbsEncoder.getPosition() < ArmConstants.kMinHeightAbs) && (position == armPositions.STOWED)) ||
-            ((armAbsEncoder.getPosition() > ArmConstants.kMaxHeightAbs) && (position == armPositions.AMP))) {
-            m_armRight.set(0);
-            return;
-        }
-
-        // For LVLTRE, LVLTWO, and HOME
-        switch (position) {
-            case AMP:
-                m_AbsPidController.setP(2);
-                m_AbsPidController.setI(.5);
-                m_AbsPidController.setD(.1);
-            case SUBSHOT:
-                m_AbsPidController.setP(2);
-                m_AbsPidController.setI(.5);
-                m_AbsPidController.setD(.1);
-            case STOWED:
-                m_AbsPidController.setP(1);
-                m_AbsPidController.setI(.5);
-                m_AbsPidController.setD(.1);
-                break;
-        // For LVLONE and CONESTOW
-            case SOURCE:
-                m_AbsPidController.setP(2);
-                m_AbsPidController.setI(.5);
-                m_AbsPidController.setD(.1);
-            default:
-                m_AbsPidController.setP(2);
-                m_AbsPidController.setI(.5);
-                m_AbsPidController.setD(.1);
-                break;
-        }
-
-        double ref = mapAbs.get(position);
-
-        double pidOut = MathUtil.clamp(
-            m_AbsPidController.calculate(armAbsEncoder.getPosition(),ref),
-            Constants.ArmConstants.kArmMinOutput, Constants.ArmConstants.kArmMaxOutput);
-        m_armRight.set(pidOut);
-    }
-
     public boolean atPosition(armPositions pos){
         double currentEncoderPosition = armAbsEncoder.getPosition();
         return (Math.abs(currentEncoderPosition - mapAbs.get(pos)) < Constants.ArmConstants.kAllowedErrAbs);
