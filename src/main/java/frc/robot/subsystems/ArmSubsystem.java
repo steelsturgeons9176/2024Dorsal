@@ -44,6 +44,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final PIDController m_AbsPidController = new PIDController(2, 0.0, 0.0);
 
+    private double currentGoal = 0.0f;
+
     
 
     private final ArmFeedforward ff =
@@ -133,6 +135,7 @@ public class ArmSubsystem extends SubsystemBase {
         }
 
         double ref = mapAbs.get(position);
+        currentGoal = ref;
 
         setpointState =
           profile.calculate(
@@ -163,9 +166,9 @@ public class ArmSubsystem extends SubsystemBase {
         return false;
     }
 
-    public boolean atPosition(armPositions pos){
+    public boolean atPosition(){
         double currentEncoderPosition = armAbsEncoder.getPosition();
-        return (Math.abs(currentEncoderPosition - mapAbs.get(pos)) < Constants.ArmConstants.kAllowedErrAbs);
+        return (Math.abs(currentEncoderPosition - currentGoal) < Constants.ArmConstants.kAllowedErrAbs);
     }
 
     public void noArmPower()

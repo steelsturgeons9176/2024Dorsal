@@ -122,7 +122,7 @@ public final class Constants {
 
     public static final double kArmMinOutput = -.4;
     public static final double kArmMaxOutput = .4;
-    public static final double kAllowedErrAbs = .008;
+    public static final double kAllowedErrAbs = .005;
   }
 
   public static final class ShooterConstants {
