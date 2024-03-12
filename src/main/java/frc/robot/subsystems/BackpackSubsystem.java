@@ -9,7 +9,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.NeoMotorConstants;
 
 public class BackpackSubsystem extends SubsystemBase {
-    private final CANSparkMax m_backpack = new CANSparkMax(NeoMotorConstants.kBackPackDeviceId, MotorType.kBrushless);
+    private final CANSparkMax m_backpack = new CANSparkMax(NeoMotorConstants.kAmpBackpackID, MotorType.kBrushless);
 
     public BackpackSubsystem() {
         m_backpack.setInverted(false);

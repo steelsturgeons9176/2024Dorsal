@@ -107,7 +107,7 @@ public final class Constants {
   }
 
   public static final class ArmConstants {
-    public static final int ARM_CURRENT_LIMIT_A = 20;
+    public static final int ARM_CURRENT_LIMIT_A = 30;
     public static final double ARM_OUTPUT_POWER = 0.50;
     public static final double kOffset = 0;
     public static final double kMinHeightAbs = 0 + kOffset;
@@ -169,8 +169,9 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
     public static final int kArmLeftDeviceId = 10;
     public static final int kArmRightDeviceId = 11;
-    public static final int kBackPackDeviceId = 12;
-    public static final int kClimbDeviceId = 13;
+    public static final int kLeftClimberID = 12;
+    public static final int kRightClimberID = 13;
+    public static final int kAmpBackpackID = 14;
         // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 20;
     public static final int kRearLeftDrivingCanId = 50;
