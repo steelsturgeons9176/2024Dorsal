@@ -14,7 +14,7 @@ public class RunShooterReverse extends Command {
 
     @Override
     public void execute() {
-        m_shooter.runShooter(-1);
+        m_shooter.runShooter(-.4);
     }
 
     @Override

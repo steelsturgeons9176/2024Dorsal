@@ -31,7 +31,7 @@ public class intakeFromFloor extends Command {
     public void execute() {
         m_intake.runIntake(1);
         m_feeder.runFeeder(.8);
-        m_indexer.RunIndexer(.1);
+        m_indexer.RunIndexer(.15);
     }
 
     @Override

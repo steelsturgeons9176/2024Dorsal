@@ -116,8 +116,8 @@ public final class Constants {
     public static final double STOWED = .0 + kOffset; // 0 degrees ~ 0/360 - 0
     public static final double INTAKE = (20.0/360.0) + kOffset; // 20 degrees ~ 20/360 - 0.0555
     public static final double SOURCE = .125 + kOffset; // 45 degrees ~ 90/360 - 0.125
-    public static final double SUBSHOT = (44.5/360.0) + kOffset; // 60 degrees ~ 60/360 - 0.166
-    public static final double PODSHOT = (33.0/360.0) + kOffset;
+    public static final double SUBSHOT = (50/360.0) + kOffset; // 60 degrees ~ 60/360 - 0.166
+    public static final double PODSHOT = (30/360.0) + kOffset;
     public static final double AMP = .25 + kOffset; // 90 degrees ~ 90/360 - 0.25
 
     public static final double kArmMinOutput = -.4;

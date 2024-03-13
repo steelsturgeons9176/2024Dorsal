@@ -23,6 +23,7 @@ import frc.robot.commands.intake.RunIntakeUnjam;
 import frc.robot.commands.manipCommands.feedToIndexer;
 import frc.robot.commands.manipCommands.findColor;
 import frc.robot.commands.manipCommands.intakeFromFloor;
+import frc.robot.commands.manipCommands.intakeFromSource;
 import frc.robot.commands.manipCommands.manipIntake;
 import frc.robot.commands.manipCommands.stowArm;
 import frc.robot.commands.shooter.RunShooter;
@@ -89,9 +90,9 @@ public class RobotContainer {
       // Turning is controlled by the X axis of the right stick.
       new RunCommand(
       () -> m_robotDrive.drive(
-      -MathUtil.applyDeadband(m_driverController.getLeftY(),
+      MathUtil.applyDeadband(m_driverController.getLeftY(),
       OIConstants.kDriveDeadband),
-      -MathUtil.applyDeadband(m_driverController.getLeftX(),
+      MathUtil.applyDeadband(m_driverController.getLeftX(),
       OIConstants.kDriveDeadband),
       -MathUtil.applyDeadband(m_driverController.getRightX(),
       OIConstants.kDriveDeadband),
@@ -151,33 +152,33 @@ public class RobotContainer {
     //m_manipController.button(5).whileTrue(new manipIntake(m_arm, m_intake, m_feeder, m_indexer));
     //m_manipController.button(6).whileTrue(new stowArm(m_arm));
 
-    m_manipController.button(4).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.INTAKE));
-    m_manipController.button(2).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.AMP));
-    m_manipController.button(1).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.STOWED));
-    m_manipController.button(3).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.SOURCE));
+    //m_manipController.button(4).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.INTAKE));
+    //m_manipController.button(2).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.AMP));
+    //m_manipController.button(1).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.STOWED));
+    //m_manipController.button(3).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.SOURCE));
     //Intake Note
-    //m_driverController.button(6).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.INTAKE), new intakeFromFloor(m_intake, m_feeder, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
+    m_driverController.button(6).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.INTAKE), new intakeFromFloor(m_intake, m_feeder, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
     //Stow arm
-    //m_driverController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.INTAKE));
+    m_driverController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.STOWED));
 
-    m_driverController.button(2).whileTrue(new findColor(m_indexer));
+    //m_driverController.button(2).whileTrue(new findColor(m_indexer));
 
     //Intake from source
-    //m_manipController.button(1).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SOURCE), new RunIndexerAmp(m_indexer), new RunShooterReverse(m_shooter)));
+    m_manipController.button(1).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SOURCE), new intakeFromSource(m_shooter, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.SOURCE));
     //Stow arm
-    m_manipController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.INTAKE)).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
+    m_manipController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.INTAKE)).onFalse(new ArmToPosition(m_arm, armPositions.STOWED));
     //Shoot into speaker from sub
-    //m_manipController.button(2).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SUBSHOT), 
-    //m_shooter.shootCommand())).onFalse(new ArmToPosition(m_arm, armPositions.SUBSHOT));//.and(m_manipController.button(6)).whileTrue(new SequentialCommandGroup
+    m_manipController.button(2).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.SUBSHOT), 
+    new RunShooter(m_shooter))).onFalse(new ArmToPosition(m_arm, armPositions.SUBSHOT));//.and(m_manipController.button(6)).whileTrue(new SequentialCommandGroup
     //(new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer))));
 
-    //m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), m_shooter.shootCommand())).onFalse(new ArmToPosition(m_arm, armPositions.PODSHOT));
+    m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), new RunShooter(m_shooter))).onFalse(new ArmToPosition(m_arm, armPositions.PODSHOT));
     //Shoot into speaker from pod
     //m_manipController.button(3).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.PODSHOT), 
     //new RunShooter(m_shooter))).and(m_manipController.button(6).whileTrue(new SequentialCommandGroup
     //(new ReverseFeeder(m_feeder), new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)))));
 
-    //m_manipController.button(6).whileTrue(new SequentialCommandGroup(new feedToIndexer(m_feeder), (new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)))));
+    m_manipController.button(6).whileTrue(new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)));
 
     m_manipController.button(8).whileTrue(new RunClimb(m_climb));
 
@@ -189,6 +190,8 @@ public class RobotContainer {
     m_manipController.pov(90).whileTrue(new ParallelCommandGroup(new RunIntakeUnjam(m_intake), new ArmToPosition(m_arm, armPositions.INTAKE), new ReverseFeeder(m_feeder))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
     //Unjam  shooter
     m_manipController.pov(180).whileTrue(new ParallelCommandGroup(new RunShooterReverse(m_shooter), new RunIndexerAmp(m_indexer)));
+
+    m_manipController.pov(270).whileTrue(new ParallelCommandGroup(new intakeFromFloor(m_intake, m_feeder, m_indexer), new ArmToPosition(m_arm, armPositions.INTAKE)));
 
     //m_manipController.button(5).whileTrue(new InstantCommand( )
     //m_manipController.button(5).whileTrue(new RunIndexer(m_indexer));
