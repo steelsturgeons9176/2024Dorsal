@@ -11,8 +11,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.arm.ArmToPosition;
+import frc.robot.commands.autoCommands.ArmPositionAuto;
+import frc.robot.commands.autoCommands.PodShotB;
+import frc.robot.commands.autoCommands.StopMotors;
+import frc.robot.commands.autoCommands.SubshotB;
 import frc.robot.commands.backpack.RunBackpack;
 import frc.robot.commands.climb.RunClimb;
+import frc.robot.commands.climb.RunClimbLeftDown;
+import frc.robot.commands.climb.RunClimbRightDown;
+import frc.robot.commands.climb.RunClimbRightUp;
 import frc.robot.commands.descend.RunDescend;
 import frc.robot.commands.feeder.ReverseFeeder;
 import frc.robot.commands.feeder.RunFeeder;
@@ -51,6 +58,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import javax.naming.PartialResultException;
 
+import com.fasterxml.jackson.core.sym.Name1;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 /*
@@ -83,6 +92,12 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
+    NamedCommands.registerCommand("SubShotB", new SubshotB(m_arm, m_indexer, m_shooter));
+    NamedCommands.registerCommand("PodShotB", new PodShotB(m_arm, m_indexer, m_shooter));
+    NamedCommands.registerCommand("StopMotors", new StopMotors(m_indexer, m_shooter));
+    NamedCommands.registerCommand("Intake", new intakeFromFloor(m_intake, m_feeder, m_indexer));
+    NamedCommands.registerCommand("ArmToPositionIntake", new ArmPositionAuto(m_arm, armPositions.INTAKE));
+
     // Configure default commands
     
      m_robotDrive.setDefaultCommand(
@@ -107,7 +122,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new PathPlannerAuto("New Auto");
+    return new PathPlannerAuto("startB-shoot2-1-3");
   }
 
   public final void shootNote() {
@@ -180,9 +195,13 @@ public class RobotContainer {
 
     m_manipController.button(6).whileTrue(new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)));
 
-    m_manipController.button(8).whileTrue(new RunClimb(m_climb));
+    m_manipController.button(7).whileTrue(new RunClimbRightDown(m_climb));
 
-    m_manipController.button(9).whileTrue(new RunDescend(m_climb));
+    m_manipController.button(8).whileTrue(new RunClimbRightUp(m_climb));
+
+    m_manipController.button(9).whileTrue(new RunClimbLeftDown(m_climb));
+
+    m_manipController.button(10).whileTrue(new RunClimbRightUp(m_climb));
 
     //Unjam deadzone
     m_manipController.pov(0).whileTrue(new ParallelCommandGroup(new ReverseFeeder(m_feeder), new ArmToPosition(m_arm, armPositions.AMP))).onFalse(new ArmToPosition(m_arm, armPositions.AMP));
@@ -196,5 +215,7 @@ public class RobotContainer {
     //m_manipController.button(5).whileTrue(new InstantCommand( )
     //m_manipController.button(5).whileTrue(new RunIndexer(m_indexer));
     //m_manipController.button(2).whileTrue(new RunIntake(m_intake));
-  }
+
+    
+}
 }

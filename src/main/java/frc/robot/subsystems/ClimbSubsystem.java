@@ -22,6 +22,16 @@ public class ClimbSubsystem extends SubsystemBase {
         m_rightClimber.setSmartCurrentLimit(ArmConstants.ARM_CURRENT_LIMIT_A);
     }
 
+    public void runClimbLeft(double speed)
+    {
+        m_leftClimber.set(speed);
+    }
+
+    public void runClimbRight(double speed)
+    {
+        m_rightClimber.set(speed);
+    }
+
     public void runClimb(double speed) {
         m_rightClimber.set(speed);
         m_leftClimber.set(speed);
