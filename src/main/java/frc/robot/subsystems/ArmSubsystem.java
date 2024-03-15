@@ -55,7 +55,7 @@ public class ArmSubsystem extends SubsystemBase {
     
 
     private final ArmFeedforward ff =
-    new ArmFeedforward(.1,.6,1.30, .01);
+    new ArmFeedforward(.9,.3,0, .1);
     //    .2, .3,
     //    0, .01);
 
@@ -97,7 +97,7 @@ public class ArmSubsystem extends SubsystemBase {
         m_AbsPidController.enableContinuousInput(0, 1);
         profile =
         new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(6, 2));
+            new TrapezoidProfile.Constraints(6, 2.5));
 
         
         armAbsEncoder = m_armRight.getAbsoluteEncoder(Type.kDutyCycle);
@@ -133,7 +133,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         m_speed = m_armRight.getEncoder().getVelocity();
         SmartDashboard.putNumber("setpointState", setpointState.position);
-        if(profile.isFinished(m_timer.get()))
+        if(profile.isFinished(m_timer.get() + .06))
         {
             setpointState = new TrapezoidProfile.State(currentGoal, 0);
             updateMotionProfile();
@@ -167,7 +167,7 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("ff", ff.calculate(setpointState.position, setpointState.velocity));
 
         //m_pidController.setReference(setpointState.position, ControlType.kPosition, 0, ff.calculate(setpointState.position * 2 * Math.PI, setpointState.velocity));
-        m_pidController.setReference(setpointState.position, ControlType.kPosition, 0, ff.calculate(armAbsEncoder.getPosition() * 2 * Math.PI, setpointState.velocity * 2 * Math.PI));
+        m_pidController.setReference(setpointState.position, ControlType.kPosition, 0, ff.calculate(setpointState.position * 2 * Math.PI, setpointState.velocity * 2 * Math.PI));
 
 
         if (((armAbsEncoder.getPosition() < ArmConstants.kMinHeightAbs) && (m_speed < 0)) ||

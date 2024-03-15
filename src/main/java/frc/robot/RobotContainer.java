@@ -23,6 +23,7 @@ import frc.robot.commands.climb.RunClimbRightUp;
 import frc.robot.commands.descend.RunDescend;
 import frc.robot.commands.feeder.ReverseFeeder;
 import frc.robot.commands.feeder.RunFeeder;
+import frc.robot.commands.indexer.IndexToAmp;
 import frc.robot.commands.indexer.RunIndexerAmp;
 import frc.robot.commands.indexer.RunIndexerShooter;
 import frc.robot.commands.intake.RunIntake;
@@ -122,7 +123,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new PathPlannerAuto("startB-shoot2-1-3");
+    return new PathPlannerAuto("startB-shoot2");
   }
 
   public final void shootNote() {
@@ -212,6 +213,8 @@ public class RobotContainer {
 
     m_manipController.pov(270).whileTrue(new ParallelCommandGroup(new intakeFromFloor(m_intake, m_feeder, m_indexer), new ArmToPosition(m_arm, armPositions.INTAKE)));
 
+
+    m_manipController.button(4).whileTrue(new IndexToAmp(m_feeder, m_indexer));
     //m_manipController.button(5).whileTrue(new InstantCommand( )
     //m_manipController.button(5).whileTrue(new RunIndexer(m_indexer));
     //m_manipController.button(2).whileTrue(new RunIntake(m_intake));
