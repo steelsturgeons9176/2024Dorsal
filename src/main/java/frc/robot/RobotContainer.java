@@ -8,9 +8,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.arm.ArmToPosition;
+import frc.robot.commands.autoCommands.AimSubThenPod;
 import frc.robot.commands.autoCommands.ArmPositionAuto;
 import frc.robot.commands.autoCommands.PodShotB;
 import frc.robot.commands.autoCommands.StopMotors;
@@ -31,6 +34,7 @@ import frc.robot.commands.intake.RunIntakeUnjam;
 import frc.robot.commands.manipCommands.feedToIndexer;
 import frc.robot.commands.manipCommands.findColor;
 import frc.robot.commands.manipCommands.intakeFromFloor;
+import frc.robot.commands.manipCommands.intakeFromFloorAmp;
 import frc.robot.commands.manipCommands.intakeFromSource;
 import frc.robot.commands.manipCommands.manipIntake;
 import frc.robot.commands.manipCommands.stowArm;
@@ -60,6 +64,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import javax.naming.PartialResultException;
 
 import com.fasterxml.jackson.core.sym.Name1;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
@@ -80,7 +85,7 @@ public class RobotContainer {
   public final IndexerSubsystem m_indexer = new IndexerSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
   
-
+  private final SendableChooser<Command> autoChooser;
   // The driver's controller
   private final CommandXboxController m_driverController = new CommandXboxController(0);
 
@@ -98,6 +103,15 @@ public class RobotContainer {
     NamedCommands.registerCommand("StopMotors", new StopMotors(m_indexer, m_shooter));
     NamedCommands.registerCommand("Intake", new intakeFromFloor(m_intake, m_feeder, m_indexer));
     NamedCommands.registerCommand("ArmToPositionIntake", new ArmPositionAuto(m_arm, armPositions.INTAKE));
+    NamedCommands.registerCommand("OverAim", new AimSubThenPod(m_arm, armPositions.SUBSHOT));
+
+    // Build an auto chooser. This will use Commands.none() as the default option.
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     // Configure default commands
     
@@ -123,7 +137,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new PathPlannerAuto("startB-shoot2");
+    return autoChooser.getSelected();
+    //return new PathPlannerAuto("startB-shoot2");
   }
 
   public final void shootNote() {
@@ -175,7 +190,7 @@ public class RobotContainer {
     //Intake Note
     m_driverController.button(6).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.INTAKE), new intakeFromFloor(m_intake, m_feeder, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
     //Stow arm
-    m_driverController.button(5).onTrue(new ArmToPosition(m_arm, armPositions.STOWED));
+    m_driverController.button(5).onTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.INTAKE), new intakeFromFloorAmp(m_intake, m_feeder, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
 
     //m_driverController.button(2).whileTrue(new findColor(m_indexer));
 
@@ -214,7 +229,7 @@ public class RobotContainer {
     m_manipController.pov(270).whileTrue(new ParallelCommandGroup(new intakeFromFloor(m_intake, m_feeder, m_indexer), new ArmToPosition(m_arm, armPositions.INTAKE)));
 
 
-    m_manipController.button(4).whileTrue(new IndexToAmp(m_feeder, m_indexer));
+    m_manipController.button(4).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.POOP), new RunShooter(m_shooter)) );
     //m_manipController.button(5).whileTrue(new InstantCommand( )
     //m_manipController.button(5).whileTrue(new RunIndexer(m_indexer));
     //m_manipController.button(2).whileTrue(new RunIntake(m_intake));

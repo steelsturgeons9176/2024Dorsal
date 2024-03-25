@@ -12,6 +12,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -65,6 +67,12 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
+
+  //m_frontLeft.getState(),
+ //                                                          m_frontRight.getState(),
+ //                                                          m_rearLeft.getState(),
+ //                                                          m_rearRight.getState()
+
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
@@ -85,9 +93,10 @@ public class DriveSubsystem extends SubsystemBase {
             this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(6.0, .25, 0.0), // Translation PID constants
-                    new PIDConstants(3, 0.1, 0.0), // Rotation PID constants
-                    4.5, // Max module speed, in m/s
+                    //new PIDConstants(1.5, .1, 0.1), // Translation PID constants 3, .01, .1
+                    new PIDConstants(1.75, .1, .1),
+                    new PIDConstants(1.5, 0.0, 0.0), // Rotation PID constants
+                    3.5, // Max module speed, in m/s 3 works best
                     0.4, // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here
             ),
@@ -106,6 +115,11 @@ public class DriveSubsystem extends SubsystemBase {
     );
   }
 
+  StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault()
+    .getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+
+  StructArrayPublisher<Pose2d> pub = NetworkTableInstance.getDefault().getStructArrayTopic("Pose", Pose2d.struct).publish();
+
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
@@ -120,6 +134,23 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+        SwerveModuleState[] states = new SwerveModuleState[] {
+    m_frontLeft.getState(),
+    m_frontRight.getState(),
+    m_rearLeft.getState(),
+    m_rearRight.getState()
+    };
+
+    Pose2d [] poses = new Pose2d[] {
+      getPose()
+    };
+
+    SmartDashboard.putNumber("FrontLeft", m_frontLeft.getAppliedOutput());
+    SmartDashboard.putNumber("FrontRight", m_frontRight.getAppliedOutput());
+    SmartDashboard.putNumber("RearLeft", m_rearLeft.getAppliedOutput());
+        publisher.set(states);
+        pub.set(poses);
   }
 
   /**

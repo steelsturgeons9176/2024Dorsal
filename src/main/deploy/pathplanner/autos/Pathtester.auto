@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.2945574370576298,
+      "y": 5.53650223579517
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "startB-pos2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pos2-pos1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pos1-pos3"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

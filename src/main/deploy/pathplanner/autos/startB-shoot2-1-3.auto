@@ -20,7 +20,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
+            "waitTime": 0.4
           }
         },
         {
@@ -51,13 +51,19 @@
         {
           "type": "named",
           "data": {
+            "name": "OverAim"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "PodShotB"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
+            "waitTime": 1.0
           }
         },
         {
@@ -88,13 +94,19 @@
         {
           "type": "named",
           "data": {
+            "name": "OverAim"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "PodShotB"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
+            "waitTime": 1.0
           }
         },
         {
@@ -120,6 +132,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "OverAim"
           }
         },
         {

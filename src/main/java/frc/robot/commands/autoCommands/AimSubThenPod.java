@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ArmPositionAuto  extends Command{
+public class AimSubThenPod  extends Command{
     private ArmSubsystem m_arm;
     private ArmSubsystem.armPositions m_targetPos;
     private ShooterSubsystem m_shooter;
@@ -13,7 +13,7 @@ public class ArmPositionAuto  extends Command{
     private boolean reachedTarget = false;
     private double m_startTime = 0;
 
-    public ArmPositionAuto(ArmSubsystem arm, ArmSubsystem.armPositions pos){
+    public AimSubThenPod(ArmSubsystem arm, ArmSubsystem.armPositions pos){
         m_arm = arm;
         m_targetPos = pos;
         m_keepRunning = false;
@@ -37,7 +37,7 @@ public class ArmPositionAuto  extends Command{
 
     @Override
     public boolean isFinished(){
-        if(getTime() >= .25f)
+        if(getTime() >= .5f)
         {
             return true;
         }

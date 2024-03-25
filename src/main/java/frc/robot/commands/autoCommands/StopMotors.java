@@ -42,7 +42,7 @@ public class StopMotors extends Command {
 
     @Override
     public boolean isFinished(){
-        if(getTime() >= .5f)
+        if(getTime() >= 1.0)
         {
             return true; 
         }

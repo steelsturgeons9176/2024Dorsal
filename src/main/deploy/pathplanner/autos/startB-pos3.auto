@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2945574370576298,
-      "y": 5.53650223579517
+      "x": 1.335622956146197,
+      "y": 5.566417514601411
     },
-    "rotation": 179.55339010647552
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "SubshotB"
+            "name": "SubShotB"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "StopMotors"
+            "waitTime": 0.4
           }
         },
         {
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "startB-pos2"
+                  "pathName": "B-pos3"
                 }
               },
               {
@@ -49,9 +49,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.1
+            "name": "OverAim"
           }
         },
         {

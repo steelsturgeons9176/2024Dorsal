@@ -34,7 +34,8 @@ public class ArmSubsystem extends SubsystemBase {
         INTAKE,
         SOURCE,
         SUBSHOT,
-        PODSHOT
+        PODSHOT,
+        POOP
     }
 
     private final CANSparkMax m_armRight = new CANSparkMax(NeoMotorConstants.kArmRightDeviceId, MotorType.kBrushless);
@@ -55,7 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
     
 
     private final ArmFeedforward ff =
-    new ArmFeedforward(.9,.3,0, .1);
+    new ArmFeedforward(.4,.4,0, .1);
     //    .2, .3,
     //    0, .01);
 
@@ -85,6 +86,7 @@ public class ArmSubsystem extends SubsystemBase {
         mapAbs.put(armPositions.SUBSHOT, ArmConstants.SUBSHOT);
         mapAbs.put(armPositions.PODSHOT, ArmConstants.PODSHOT);
         mapAbs.put(armPositions.INTAKE, ArmConstants.INTAKE);
+        mapAbs.put(armPositions.POOP, ArmConstants.POOP);
 
         m_armRight.setInverted(true);
         m_armRight.setIdleMode(IdleMode.kBrake);

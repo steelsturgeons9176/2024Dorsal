@@ -46,8 +46,8 @@ public class SubshotB extends Command {
 
     @Override
     public boolean isFinished(){
-        if(getTime() >= 1.5f && m_arm.atPosition())
-        {
+        if(getTime() >= 1.0f)
+        {            
             return true; 
         }
         return false;

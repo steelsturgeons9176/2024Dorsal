@@ -30,9 +30,13 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = 4.8;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
-    public static final double kDirectionSlewRate = 1.2; // radians per second
-    public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
-    public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+    //public static final double kDirectionSlewRate = 1.2; // radians per second
+    //public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
+    //public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+
+    public static final double kDirectionSlewRate = 3.8; // radians per second
+    public static final double kMagnitudeSlewRate = 15.6; // percent per second (1 = 100%)
+    public static final double kRotationalSlewRate = 12.0; // percent per second (1 = 100%)
 
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(22.5);
@@ -92,36 +96,37 @@ public final class Constants {
     public static final double kDrivingMinOutput = -1;
     public static final double kDrivingMaxOutput = 1;
 
-    public static final double kTurningP = 1;
+    public static final double kTurningP = .75;
     public static final double kTurningI = 0;
     public static final double kTurningD = 0;
     public static final double kTurningFF = 0;
     public static final double kTurningMinOutput = -1;
     public static final double kTurningMaxOutput = 1;
 
-    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
+    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 50; // amps
-    public static final int kTurningMotorCurrentLimit = 20; // amps
+    public static final int kDrivingMotorCurrentLimit = 40; // amps
+    public static final int kTurningMotorCurrentLimit = 25; // amps
   }
 
   public static final class ArmConstants {
-    public static final int ARM_CURRENT_LIMIT_A = 35;
-    public static final double ARM_OUTPUT_POWER = 0.50;
+    public static final int ARM_CURRENT_LIMIT_A = 40;
+    public static final double ARM_OUTPUT_POWER = 0.60;
     public static final double kOffset = 0;
     public static final double kMinHeightAbs = 0 + kOffset;
     public static final double kMaxHeightAbs = .25 + kOffset;
 
-    public static final double STOWED = .0 + kOffset; // 0 degrees ~ 0/360 - 0
+    public static final double STOWED = (25.0/360.0f) + kOffset; // 0 degrees ~ 0/360 - 0
     public static final double INTAKE = (20.0f/360.0f) + kOffset; // 20 degrees ~ 20/360 - 0.0555
     public static final double SOURCE = .125 + kOffset; // 45 degrees ~ 90/360 - 0.125
     public static final double SUBSHOT = (53.0f/360.0f) + kOffset; // 60 degrees ~ 60/360 - 0.166
     public static final double PODSHOT = (33.0f/360.0f) + kOffset;
     public static final double AMP = .25 + kOffset; // 90 degrees ~ 90/360 - 0.25
+    public static final double POOP = (7.0f/360.0f) + kOffset;
 
-    public static final double kArmMinOutput = -.5;
-    public static final double kArmMaxOutput = .5;
+    public static final double kArmMinOutput = -.6;
+    public static final double kArmMaxOutput = .6;
     public static final double kAllowedErrAbs = .008f;
   }
 

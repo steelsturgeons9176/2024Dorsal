@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2945574370576298,
-      "y": 5.53650223579517
+      "x": 0.7434431971001721,
+      "y": 4.416640472235815
     },
-    "rotation": 179.55339010647552
+    "rotation": 120.96375653207355
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "SubshotB"
+            "name": "SubShotB"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "StopMotors"
+            "waitTime": 0.2
           }
         },
         {
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "startB-pos2"
+                  "pathName": "C-pos8"
                 }
               },
               {
@@ -49,15 +49,15 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.1
+            "pathName": "Pos8-StartC"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PodShotB"
+            "name": "SubShotB"
           }
         }
       ]
