@@ -56,7 +56,7 @@ public class ArmSubsystem extends SubsystemBase {
     
 
     private final ArmFeedforward ff =
-    new ArmFeedforward(.4,.4,0, .1);
+    new ArmFeedforward(.4,.44,1.95, .01);
     //    .2, .3,
     //    0, .01);
 
