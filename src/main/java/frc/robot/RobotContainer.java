@@ -48,6 +48,7 @@ import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.VisionSubSystem;
 import frc.robot.subsystems.ArmSubsystem.armPositions;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -84,6 +85,7 @@ public class RobotContainer {
   public final ShooterSubsystem m_shooter = new ShooterSubsystem();
   public final IndexerSubsystem m_indexer = new IndexerSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
+  public final VisionSubSystem m_vision = new VisionSubSystem();
   
   private final SendableChooser<Command> autoChooser;
   // The driver's controller

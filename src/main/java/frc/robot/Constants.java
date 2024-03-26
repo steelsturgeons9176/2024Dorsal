@@ -118,7 +118,7 @@ public final class Constants {
     public static final double kMaxHeightAbs = .25 + kOffset;
 
     public static final double STOWED = (25.0/360.0f) + kOffset; // 0 degrees ~ 0/360 - 0
-    public static final double INTAKE = (20.0f/360.0f) + kOffset; // 20 degrees ~ 20/360 - 0.0555
+    public static final double INTAKE = .05 + kOffset; // 20 degrees ~ 20/360 - 0.0555
     public static final double SOURCE = .125 + kOffset; // 45 degrees ~ 90/360 - 0.125
     public static final double SUBSHOT = (53.0f/360.0f) + kOffset; // 60 degrees ~ 60/360 - 0.166
     public static final double PODSHOT = (33.0f/360.0f) + kOffset;

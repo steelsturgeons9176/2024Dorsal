@@ -5,27 +5,33 @@ import java.util.EnumMap;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleArrayEntry;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructArraySubscriber;
+import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.NeoMotorConstants;
-import frc.robot.commands.arm.ArmToPosition;
 
 public class ArmSubsystem extends SubsystemBase {
     public enum armPositions{
@@ -49,16 +55,32 @@ public class ArmSubsystem extends SubsystemBase {
 
     private double currentGoal = 0.125f;
 
+    DoubleSubscriber currentGoalSub;
+
     private double loopTimer = 0;
 
     private Timer m_timer;
 
-    
+    private double kS_tuner = 0;
 
-    private final ArmFeedforward ff =
-    new ArmFeedforward(.4,.44,1.95, .01);
+    private double kP = 3.0;
+    private double kI = 0.0;
+    private double kD = 0.0;
+
+    private double pidRestTimer = 0.0;
+
+    private double kG = .17;
+    private double kS = .4;
+    private double kV = 1.95;
+    private double kA = .01;
+
+    private ArmFeedforward ff =
+    new ArmFeedforward(kS, kG ,kV, kA);
     //    .2, .3,
     //    0, .01);
+    // StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().
+    
+
 
     //.43 kG, 1.17 V*s/rad, .01 V*s^2/rad
 
@@ -73,6 +95,9 @@ public class ArmSubsystem extends SubsystemBase {
     EnumMap<armPositions, Double> mapAbs = new EnumMap<>(armPositions.class);
 
     double m_speed = 0.0;
+
+    //DoublePublisher kG_gain = NetworkTableInstance.getDefault()
+    //.getDoubleTopic("MyStates", ).publish();
 
     public ArmSubsystem () {
 
@@ -99,7 +124,7 @@ public class ArmSubsystem extends SubsystemBase {
         m_AbsPidController.enableContinuousInput(0, 1);
         profile =
         new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(6, 2.5));
+            new TrapezoidProfile.Constraints(8, 4));
 
         
         armAbsEncoder = m_armRight.getAbsoluteEncoder(Type.kDutyCycle);
@@ -107,9 +132,9 @@ public class ArmSubsystem extends SubsystemBase {
         m_pidController.setFeedbackDevice(armAbsEncoder);
         m_pidController.setOutputRange(Constants.ArmConstants.kArmMinOutput, Constants.ArmConstants.kArmMaxOutput);
 
-        m_pidController.setP(3);
-        m_pidController.setI(0);
-        m_pidController.setD(0);
+        m_pidController.setP(kP);
+        m_pidController.setI(kI);
+        m_pidController.setD(kD);
         m_pidController.setPositionPIDWrappingEnabled(true);
         m_pidController.setPositionPIDWrappingMinInput(0.0f);
         m_pidController.setPositionPIDWrappingMaxInput(1.0f);
@@ -117,6 +142,18 @@ public class ArmSubsystem extends SubsystemBase {
         
         m_armRight.burnFlash();
         m_armLeft.burnFlash();
+
+        SmartDashboard.putNumber("Arm/goal", currentGoal);
+        SmartDashboard.putNumber("Arm/KP", kP);
+        SmartDashboard.putNumber("Arm/KI", kI);
+        SmartDashboard.putNumber("Arm/KD", kD);
+
+        SmartDashboard.putNumber("Arm/KS", kS);
+        SmartDashboard.putNumber("Arm/KG", kG);
+        SmartDashboard.putNumber("Arm/KV", kV);
+        SmartDashboard.putNumber("Arm/KA", kA);
+
+        SmartDashboard.putNumber("Arm/KSTuner", kS_tuner);
 
         //setDefaultCommand(new ArmToPosition(this, armPositions.STOWED));
     }
@@ -129,6 +166,50 @@ public class ArmSubsystem extends SubsystemBase {
         //SmartDashboard.putNumber("Arm Motor Speed", m_speed);
         SmartDashboard.putNumber("LeftMotor", m_armRight.getOutputCurrent());
         SmartDashboard.putNumber("Right Motor", m_armLeft.getOutputCurrent());
+
+        currentGoal = SmartDashboard.getNumber("Arm/goal", currentGoal);
+        kP = SmartDashboard.getNumber("Arm/KP", kP);
+        kI = SmartDashboard.getNumber("Arm/KI", kI);
+        kD = SmartDashboard.getNumber("Arm/KD", kD);
+
+        kS = SmartDashboard.getNumber("Arm/KS", kS); 
+        kG = SmartDashboard.getNumber("Arm/KG", kG);
+        kV = SmartDashboard.getNumber("Arm/KV", kV);
+        kA = SmartDashboard.getNumber("Arm/KA", kA);
+
+        kS_tuner = SmartDashboard.getNumber("Arm/KSTuner", kS_tuner);
+
+        if( m_pidController.getP() != kP || m_pidController.getI() != kI || m_pidController.getD() != kD)
+        {
+            updatePID();
+        }
+
+        if(ff.ka != kA || ff.kg != kG || ff.ks != kS || ff.kv != kV)
+        {
+            ff = new ArmFeedforward(kS, kG, kV, kA);
+        }
+
+
+
+        
+        //SmartDashboard.putNumber("tester", currentGoal);
+        //kGpub.set(kG);
+        //currentGoal = currentGoalSub.getAsDouble();
+        //kGpub.set(kG);
+        //kAsub.set(kA);
+        //kVsub.set(kV);
+        //kSsub.set(kS);
+
+
+        //kG = kGsub.getAsDouble();
+        //kA = kAsub.getAsDouble();
+        //kV = kVsub.getAsDouble();
+        //kS = kSsub.getAsDouble();
+        //currentGoalPub.set(currentGoal);
+        //gains = gainsSub.get();
+        //gains = gainEntry.get();
+
+        //gainEntry.set(gains);
 
         // SmartDashboard.putNumber("ArmABS Offset", armAbsEncoder.getPositionOffset());  
         //   Might use global that is set by drive periodic to indicate if driving too fast.
@@ -168,9 +249,12 @@ public class ArmSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("ff", ff.calculate(setpointState.position, setpointState.velocity));
 
+        m_armRight.set(kS_tuner);
+
+//        SmartDashboard.putNumber("voltage", m_armRight.getBusVoltage());
+
         //m_pidController.setReference(setpointState.position, ControlType.kPosition, 0, ff.calculate(setpointState.position * 2 * Math.PI, setpointState.velocity));
         m_pidController.setReference(setpointState.position, ControlType.kPosition, 0, ff.calculate(setpointState.position * 2 * Math.PI, setpointState.velocity * 2 * Math.PI));
-
 
         if (((armAbsEncoder.getPosition() < ArmConstants.kMinHeightAbs) && (m_speed < 0)) ||
             ((armAbsEncoder.getPosition() > ArmConstants.kMaxHeightAbs) && (m_speed > 0))) {
@@ -212,6 +296,13 @@ public class ArmSubsystem extends SubsystemBase {
         return false;
     }
 
+    public void updatePID() 
+    {
+        m_pidController.setP(kP);
+        m_pidController.setI(kI);
+        m_pidController.setD(kD);
+    }
+
     public boolean atPosition(){
         double currentEncoderPosition = armAbsEncoder.getPosition();
         return (Math.abs(currentEncoderPosition - currentGoal) < Constants.ArmConstants.kAllowedErrAbs);
@@ -221,4 +312,5 @@ public class ArmSubsystem extends SubsystemBase {
     {
         m_armRight.set(0);
     }
+
 }
