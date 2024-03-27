@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
@@ -165,5 +166,11 @@ public class MAXSwerveModule {
   public double getAppliedOutput()
   {
     return m_drivingSparkMax.getAppliedOutput();
+  }
+
+  public void setToCoast()
+  {
+    m_drivingSparkMax.setIdleMode(IdleMode.kCoast);
+    m_drivingSparkMax.burnFlash();
   }
 }

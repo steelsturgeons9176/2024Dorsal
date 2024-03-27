@@ -63,16 +63,18 @@ public class ArmSubsystem extends SubsystemBase {
 
     private double kS_tuner = 0;
 
-    private double kP = 3.0;
-    private double kI = 0.0;
+    private double kP = 1.2;
+    private double kI = .4;
     private double kD = 0.0;
 
     private double pidRestTimer = 0.0;
 
-    private double kG = .17;
+    private double kG = .4;
     private double kS = .4;
     private double kV = 1.95;
     private double kA = .01;
+
+    private boolean isTuning = false;
 
     private ArmFeedforward ff =
     new ArmFeedforward(kS, kG ,kV, kA);
@@ -167,31 +169,11 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("LeftMotor", m_armRight.getOutputCurrent());
         SmartDashboard.putNumber("Right Motor", m_armLeft.getOutputCurrent());
 
-        currentGoal = SmartDashboard.getNumber("Arm/goal", currentGoal);
-        kP = SmartDashboard.getNumber("Arm/KP", kP);
-        kI = SmartDashboard.getNumber("Arm/KI", kI);
-        kD = SmartDashboard.getNumber("Arm/KD", kD);
-
-        kS = SmartDashboard.getNumber("Arm/KS", kS); 
-        kG = SmartDashboard.getNumber("Arm/KG", kG);
-        kV = SmartDashboard.getNumber("Arm/KV", kV);
-        kA = SmartDashboard.getNumber("Arm/KA", kA);
-
-        kS_tuner = SmartDashboard.getNumber("Arm/KSTuner", kS_tuner);
-
-        if( m_pidController.getP() != kP || m_pidController.getI() != kI || m_pidController.getD() != kD)
+        if(isTuning)
         {
-            updatePID();
+            tuneNumbers();
         }
 
-        if(ff.ka != kA || ff.kg != kG || ff.ks != kS || ff.kv != kV)
-        {
-            ff = new ArmFeedforward(kS, kG, kV, kA);
-        }
-
-
-
-        
         //SmartDashboard.putNumber("tester", currentGoal);
         //kGpub.set(kG);
         //currentGoal = currentGoalSub.getAsDouble();
@@ -311,6 +293,31 @@ public class ArmSubsystem extends SubsystemBase {
     public void noArmPower()
     {
         m_armRight.set(0);
+    }
+
+    public void tuneNumbers()
+    {
+        currentGoal = SmartDashboard.getNumber("Arm/goal", currentGoal);
+        kP = SmartDashboard.getNumber("Arm/KP", kP);
+        kI = SmartDashboard.getNumber("Arm/KI", kI);
+        kD = SmartDashboard.getNumber("Arm/KD", kD);
+
+        kS = SmartDashboard.getNumber("Arm/KS", kS); 
+        kG = SmartDashboard.getNumber("Arm/KG", kG);
+        kV = SmartDashboard.getNumber("Arm/KV", kV);
+        kA = SmartDashboard.getNumber("Arm/KA", kA);
+
+        kS_tuner = SmartDashboard.getNumber("Arm/KSTuner", kS_tuner);
+
+        if( m_pidController.getP() != kP || m_pidController.getI() != kI || m_pidController.getD() != kD)
+        {
+            updatePID();
+        }
+
+        if(ff.ka != kA || ff.kg != kG || ff.ks != kS || ff.kv != kV)
+        {
+            ff = new ArmFeedforward(kS, kG, kV, kA);
+        }
     }
 
 }

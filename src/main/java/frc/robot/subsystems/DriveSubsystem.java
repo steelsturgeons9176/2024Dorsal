@@ -67,6 +67,16 @@ public class DriveSubsystem extends SubsystemBase {
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
+  private boolean isTuning = false;
+
+  private double transKp = 1.5;
+  private double transKi = 0.1;
+  private double transKd = 0.1;
+
+  private double rotKp = 1.5;
+  private double rotKi = 0.0;
+  private double rotKd = 0.0;
+
 
   //m_frontLeft.getState(),
  //                                                          m_frontRight.getState(),
@@ -86,6 +96,18 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() { 
+
+    SmartDashboard.putNumber("Auto/Drive/transKp", transKp);
+    SmartDashboard.putNumber("Auto/Drive/transKi", transKi);
+    SmartDashboard.putNumber("Auto/Drive/transKd", transKd);
+
+    SmartDashboard.putNumber("Auto/Drive/rotKp", rotKp);
+    SmartDashboard.putNumber("Auto/Drive/rotKi", rotKi);
+    SmartDashboard.putNumber("Auto/Drive/rotKd", rotKd);
+    if(isTuning)
+    {
+      tuneNumbers();
+    }
     //m_gyro.calibrate();
     AutoBuilder.configureHolonomic(
             this::getPose, // Robot pose supplier
@@ -94,7 +116,7 @@ public class DriveSubsystem extends SubsystemBase {
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     //new PIDConstants(1.5, .1, 0.1), // Translation PID constants 3, .01, .1
-                    new PIDConstants(1.75, .1, .1),
+                    new PIDConstants(transKp, .1, .1),//1.75p for 4 note
                     new PIDConstants(1.5, 0.0, 0.0), // Rotation PID constants
                     4.8, // Max module speed
                     0.4, // Drive base radius in meters. Distance from robot center to furthest module.
@@ -151,6 +173,10 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("RearLeft", m_rearLeft.getAppliedOutput());
         publisher.set(states);
         pub.set(poses);
+    if(isTuning)
+    {
+      tuneNumbers();
+    }
   }
 
   /**
@@ -332,6 +358,79 @@ public class DriveSubsystem extends SubsystemBase {
   public double getHeading() {
     return Rotation2d.fromDegrees(m_gyro.getAngle()).getDegrees();
   }
+
+  public void setToCoast() {
+    m_frontLeft.setToCoast();
+    m_frontRight.setToCoast();
+    m_rearLeft.setToCoast();
+    m_rearRight.setToCoast();
+  }
+
+  public void tuneNumbers()
+  {
+    boolean changedConfig = false;
+    if(transKp != SmartDashboard.getNumber("Auto/Drive/transKp", transKp))
+    {
+      transKp = SmartDashboard.getNumber("Auto/Drive/transKp", transKp);
+      changedConfig = true;
+    }
+    if(transKi != SmartDashboard.getNumber("Auto/Drive/transKi", transKi))
+    {
+      transKi = SmartDashboard.getNumber("Auto/Drive/transKi", transKi);
+      changedConfig = true;
+    }
+    if(transKd != SmartDashboard.getNumber("Auto/Drive/transKd", transKd))
+    {
+      transKd = SmartDashboard.getNumber("Auto/Drive/transKd", transKd);
+      changedConfig = true;
+    }
+
+    if(rotKp != SmartDashboard.getNumber("Auto/Drive/rotKp", rotKp))
+    {
+      rotKp = SmartDashboard.getNumber("Auto/Drive/rotKp", rotKp);
+      changedConfig = true;
+    }if(rotKi != SmartDashboard.getNumber("Auto/Drive/rotKi", rotKi))
+    {
+      rotKi = SmartDashboard.getNumber("Auto/Drive/rotKi", rotKi);
+      changedConfig = true;
+    }
+    if(rotKd != SmartDashboard.getNumber("Auto/Drive/rotKd", rotKd))
+    {
+      rotKd = SmartDashboard.getNumber("Auto/Drive/rotKd", rotKd);
+      changedConfig = true;
+    }
+    if(changedConfig == true)
+    {
+      AutoBuilder.configureHolonomic(
+            this::getPose, // Robot pose supplier
+            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                    //new PIDConstants(1.5, .1, 0.1), // Translation PID constants 3, .01, .1
+                    new PIDConstants(transKp, transKi, transKd),
+                    new PIDConstants(rotKp, rotKi, rotKd), // Rotation PID constants
+                    4.8, // Max module speed
+                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new ReplanningConfig() // Default path replanning config. See the API for the options here
+            ),
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
+    SmartDashboard.putBoolean("yest", true);
+    
+  }
+}
 
   /**
    * Returns the turn rate of the robot.

@@ -18,12 +18,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.4
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -51,19 +45,7 @@
         {
           "type": "named",
           "data": {
-            "name": "OverAim"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "PodShotB"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
           }
         },
         {
@@ -94,19 +76,7 @@
         {
           "type": "named",
           "data": {
-            "name": "OverAim"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "PodShotB"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
           }
         },
         {
@@ -132,12 +102,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "OverAim"
           }
         },
         {

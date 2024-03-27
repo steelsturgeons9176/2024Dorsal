@@ -21,6 +21,7 @@ import frc.robot.commands.autoCommands.SubshotB;
 import frc.robot.commands.backpack.RunBackpack;
 import frc.robot.commands.climb.RunClimb;
 import frc.robot.commands.climb.RunClimbLeftDown;
+import frc.robot.commands.climb.RunClimbLeftUp;
 import frc.robot.commands.climb.RunClimbRightDown;
 import frc.robot.commands.climb.RunClimbRightUp;
 import frc.robot.commands.descend.RunDescend;
@@ -40,6 +41,7 @@ import frc.robot.commands.manipCommands.manipIntake;
 import frc.robot.commands.manipCommands.stowArm;
 import frc.robot.commands.shooter.RunShooter;
 import frc.robot.commands.shooter.RunShooterReverse;
+import frc.robot.commands.vision.aimTele;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BackpackSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -77,7 +79,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final ArmSubsystem m_arm = new ArmSubsystem();
   public final BackpackSubsystem m_backpack = new BackpackSubsystem();
   public final ClimbSubsystem m_climb = new ClimbSubsystem();
@@ -181,6 +183,15 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+    m_driverController.a().whileTrue(new RunCommand(() -> m_robotDrive.drive(
+      MathUtil.applyDeadband(m_driverController.getLeftY(),
+      OIConstants.kDriveDeadband),
+      MathUtil.applyDeadband(m_driverController.getLeftX(),
+      OIConstants.kDriveDeadband),
+      m_vision.limelight_aim_proportional(),
+      true, true),
+      m_robotDrive));
+
     m_driverController.x().onTrue(new InstantCommand(() -> m_robotDrive.zeroHaw()));
     //m_manipController.button(5).whileTrue(new manipIntake(m_arm, m_intake, m_feeder, m_indexer));
     //m_manipController.button(6).whileTrue(new stowArm(m_arm));
@@ -219,7 +230,7 @@ public class RobotContainer {
 
     m_manipController.button(9).whileTrue(new RunClimbLeftDown(m_climb));
 
-    m_manipController.button(10).whileTrue(new RunClimbRightUp(m_climb));
+    m_manipController.button(10).whileTrue(new RunClimbLeftUp(m_climb));
 
     //Unjam deadzone
     m_manipController.pov(0).whileTrue(new ParallelCommandGroup(new ReverseFeeder(m_feeder), new ArmToPosition(m_arm, armPositions.AMP))).onFalse(new ArmToPosition(m_arm, armPositions.AMP));

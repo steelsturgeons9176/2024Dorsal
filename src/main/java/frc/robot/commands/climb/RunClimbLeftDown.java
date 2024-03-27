@@ -10,7 +10,6 @@ public class RunClimbLeftDown extends Command {
     public RunClimbLeftDown(ClimbSubsystem climb) {
         m_climb = climb;
 
-        addRequirements(m_climb);
     }
 
     @Override
