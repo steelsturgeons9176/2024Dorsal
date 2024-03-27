@@ -1,24 +1,23 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.NeoMotorConstants;
+import frc.robot.Constants.KrakenMotorConstants;
 
 public class BackpackSubsystem extends SubsystemBase {
-    //private final CANSparkMax m_backpack = new CANSparkMax(NeoMotorConstants.kAmpBackpackID, MotorType.kBrushless);
+    private final TalonFX m_backpack = new TalonFX(KrakenMotorConstants.kAmpBackpackID);
 
     public BackpackSubsystem() {
-       /// m_backpack.setInverted(false);
-       // m_backpack.setIdleMode(IdleMode.kBrake);
-//        m_backpack.setSmartCurrentLimit(ArmConstants.ARM_CURRENT_LIMIT_A);
+       m_backpack.setInverted(false);
+       m_backpack.setNeutralMode(NeutralModeValue.Coast);
+        m_backpack.setVoltage(12);
+        m_backpack.set(0);
 
     }
 
     public void runBackpack(double speed) {
-  //      m_backpack.set(speed);
+      m_backpack.set(speed);
     }
 }
