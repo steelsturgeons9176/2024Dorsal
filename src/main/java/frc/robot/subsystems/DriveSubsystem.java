@@ -63,13 +63,13 @@ public class DriveSubsystem extends SubsystemBase {
   private double m_currentTranslationDir = 0.0;
   private double m_currentTranslationMag = 0.0;
 
-  private SlewRateLimiter m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
-  private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
+  private SlewRateLimiter m_magLimiter; //= new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
+  private SlewRateLimiter m_rotLimiter; //= new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
 
-  private boolean isTuning = false;
+  private final boolean isTuning = false;
 
-  private double transKp = 1.5;
+  private double transKp = 1.75;
   private double transKi = 0.1;
   private double transKd = 0.1;
 
@@ -95,19 +95,20 @@ public class DriveSubsystem extends SubsystemBase {
       });
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() { 
+  public DriveSubsystem() {
 
-    SmartDashboard.putNumber("Auto/Drive/transKp", transKp);
-    SmartDashboard.putNumber("Auto/Drive/transKi", transKi);
-    SmartDashboard.putNumber("Auto/Drive/transKd", transKd);
+    m_magLimiter = new SlewRateLimiter(DriveConstants.kAutoMagnitudeSlewRate);
+    m_rotLimiter = new SlewRateLimiter(DriveConstants.kAutoDirctionalSlewRate);
 
-    SmartDashboard.putNumber("Auto/Drive/rotKp", rotKp);
-    SmartDashboard.putNumber("Auto/Drive/rotKi", rotKi);
-    SmartDashboard.putNumber("Auto/Drive/rotKd", rotKd);
-    if(isTuning)
-    {
-      tuneNumbers();
-    }
+
+    //SmartDashboard.putNumber("Auto/Drive/transKp", transKp);
+    //SmartDashboard.putNumber("Auto/Drive/transKi", transKi);
+    //SmartDashboard.putNumber("Auto/Drive/transKd", transKd);
+
+    //SmartDashboard.putNumber("Auto/Drive/rotKp", rotKp);
+    //SmartDashboard.putNumber("Auto/Drive/rotKi", rotKi);
+    //SmartDashboard.putNumber("Auto/Drive/rotKd", rotKd);
+
     //m_gyro.calibrate();
     AutoBuilder.configureHolonomic(
             this::getPose, // Robot pose supplier
@@ -147,7 +148,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Update the odometry in the periodic block
 
     SmartDashboard.putNumber("Gyro Current Angle", -m_gyro.getAngle());
-    SmartDashboard.putNumber("Pitch", getPitch());
+    //SmartDashboard.putNumber("Pitch", getPitch());
     m_odometry.update(
         Rotation2d.fromDegrees(-m_gyro.getAngle()),
         new SwerveModulePosition[] {
@@ -168,9 +169,9 @@ public class DriveSubsystem extends SubsystemBase {
       getPose()
     };
 
-    SmartDashboard.putNumber("FrontLeft", m_frontLeft.getAppliedOutput());
-    SmartDashboard.putNumber("FrontRight", m_frontRight.getAppliedOutput());
-    SmartDashboard.putNumber("RearLeft", m_rearLeft.getAppliedOutput());
+    //SmartDashboard.putNumber("FrontLeft", m_frontLeft.getAppliedOutput());
+    //SmartDashboard.putNumber("FrontRight", m_frontRight.getAppliedOutput());
+    //SmartDashboard.putNumber("RearLeft", m_rearLeft.getAppliedOutput());
         publisher.set(states);
         pub.set(poses);
     if(isTuning)
@@ -348,6 +349,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void zeroHaw() {
     m_gyro.zeroYaw();
+    
   }
 
   /**
@@ -439,6 +441,12 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  public void changeTeleopSlew()
+  {
+    m_magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
+    m_rotLimiter = new SlewRateLimiter(DriveConstants.kMaxAngularSpeed);
   }
 
   public double getPitch() { return m_gyro.getPitch(); }

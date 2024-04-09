@@ -15,7 +15,7 @@ public class RunClimb extends Command {
 
     @Override
     public void execute() {
-        m_climb.runClimb(1);
+        m_climb.runClimb(-1);
     }
 
     @Override

@@ -33,6 +33,12 @@ public class IndexerSubsystem extends SubsystemBase {
         m_colorMatcher.addColorMatch(kGreenTarget);
     }
 
+    @Override
+    public void periodic()
+    {
+        //SmartDashboard.putBoolean("Note Detected", noteDetected);
+    }
+
     public void RunIndexer(double speed) {
         m_indexer.set(speed);
     }

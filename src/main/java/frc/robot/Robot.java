@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.m_robotDrive.setToCoast();
+    m_robotContainer.m_robotDrive.changeTeleopSlew();
   }
 
   /** This function is called periodically during operator control. */

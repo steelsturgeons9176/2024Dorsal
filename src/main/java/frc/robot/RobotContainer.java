@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.autoCommands.AimSubThenPod;
+import frc.robot.commands.autoCommands.AimVision;
 import frc.robot.commands.autoCommands.ArmPositionAuto;
 import frc.robot.commands.autoCommands.PodShotB;
 import frc.robot.commands.autoCommands.StopMotors;
@@ -39,6 +40,8 @@ import frc.robot.commands.manipCommands.intakeFromFloorAmp;
 import frc.robot.commands.manipCommands.intakeFromSource;
 import frc.robot.commands.manipCommands.manipIntake;
 import frc.robot.commands.manipCommands.stowArm;
+import frc.robot.commands.manipCommands.transferToAmpback;
+import frc.robot.commands.manipCommands.transferToShooter;
 import frc.robot.commands.shooter.RunShooter;
 import frc.robot.commands.shooter.RunShooterReverse;
 import frc.robot.commands.vision.aimTele;
@@ -57,6 +60,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -91,7 +95,7 @@ public class RobotContainer {
   
   private final SendableChooser<Command> autoChooser;
   // The driver's controller
-  private final CommandXboxController m_driverController = new CommandXboxController(0);
+  private final CommandPS4Controller m_driverController = new CommandPS4Controller(0);
 
   public final CommandJoystick m_manipController = new CommandJoystick(1);
 
@@ -108,6 +112,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", new intakeFromFloor(m_intake, m_feeder, m_indexer));
     NamedCommands.registerCommand("ArmToPositionIntake", new ArmPositionAuto(m_arm, armPositions.INTAKE));
     NamedCommands.registerCommand("OverAim", new AimSubThenPod(m_arm, armPositions.SUBSHOT));
+    NamedCommands.registerCommand("Aim", new AimVision(m_robotDrive, m_vision));
+
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -183,7 +189,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_driverController.a().whileTrue(new RunCommand(() -> m_robotDrive.drive(
+    m_driverController.cross().whileTrue(new RunCommand(() -> m_robotDrive.drive(
       MathUtil.applyDeadband(m_driverController.getLeftY(),
       OIConstants.kDriveDeadband),
       MathUtil.applyDeadband(m_driverController.getLeftX(),
@@ -192,7 +198,17 @@ public class RobotContainer {
       true, true),
       m_robotDrive));
 
-    m_driverController.x().onTrue(new InstantCommand(() -> m_robotDrive.zeroHaw()));
+    m_driverController.circle().whileTrue(new RunCommand(() -> m_robotDrive.drive(
+      m_vision.limelight_range_proportional(),
+      MathUtil.applyDeadband(m_driverController.getLeftX(),
+      OIConstants.kDriveDeadband),
+      m_vision.limelight_aim_proportional(),
+      true, true),
+      m_robotDrive));
+
+    m_driverController.square().onTrue(new InstantCommand(() -> m_robotDrive.zeroHaw()));
+    m_driverController.axisGreaterThan(3, -.5).whileTrue(new transferToAmpback(m_feeder, m_indexer));
+    m_driverController.axisGreaterThan(4, -.5).onTrue(new transferToShooter(m_feeder, m_indexer));
     //m_manipController.button(5).whileTrue(new manipIntake(m_arm, m_intake, m_feeder, m_indexer));
     //m_manipController.button(6).whileTrue(new stowArm(m_arm));
 
@@ -201,10 +217,11 @@ public class RobotContainer {
     //m_manipController.button(1).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.STOWED));
     //m_manipController.button(3).onTrue(new ArmToPosition(m_arm, ArmSubsystem.armPositions.SOURCE));
     //Intake Note
-    m_driverController.button(6).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.INTAKE), new intakeFromFloor(m_intake, m_feeder, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
+    m_driverController.R1().whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.INTAKE), new intakeFromFloor(m_intake, m_feeder, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
     //Stow arm
-    m_driverController.button(5).onTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.INTAKE), new intakeFromFloorAmp(m_intake, m_feeder, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
+    m_driverController.L1().onTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.INTAKE), new intakeFromFloorAmp(m_intake, m_feeder, m_indexer))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
 
+    m_driverController.button(12).onTrue(new ArmToPosition(m_arm, armPositions.STOWED));
     //m_driverController.button(2).whileTrue(new findColor(m_indexer));
 
     //Intake from source
@@ -224,9 +241,12 @@ public class RobotContainer {
 
     m_manipController.button(6).whileTrue(new ParallelCommandGroup(new RunFeeder(m_feeder), new RunIndexerShooter(m_indexer)));
 
-    m_manipController.button(7).whileTrue(new RunClimbRightDown(m_climb));
+    //m_manipController.button(7).whileTrue(new RunClimbRightDown(m_climb));
+    m_manipController.button(7).whileTrue(new RunClimb(m_climb));
 
-    m_manipController.button(8).whileTrue(new RunClimbRightUp(m_climb));
+    m_manipController.button(8).whileTrue(new RunDescend(m_climb));
+
+    //m_manipController.button(8).whileTrue(new RunClimbRightUp(m_climb));
 
     m_manipController.button(9).whileTrue(new RunClimbLeftDown(m_climb));
 
@@ -237,11 +257,11 @@ public class RobotContainer {
     //Unjam intake
     m_manipController.pov(90).whileTrue(new ParallelCommandGroup(new RunIntakeUnjam(m_intake), new ArmToPosition(m_arm, armPositions.INTAKE), new ReverseFeeder(m_feeder))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
     //Unjam  shooter
-    m_manipController.pov(180).whileTrue(new ParallelCommandGroup(new intakeFromFloorAmp(m_intake, m_feeder, m_indexer), new RunIndexerAmp(m_indexer)));
+    m_manipController.pov(180).whileTrue(new ParallelCommandGroup(new intakeFromFloorAmp(m_intake, m_feeder, m_indexer), new ArmToPosition(m_arm, armPositions.INTAKE))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
 
-    m_manipController.pov(270).whileTrue(new ParallelCommandGroup(new intakeFromFloor(m_intake, m_feeder, m_indexer), new ArmToPosition(m_arm, armPositions.INTAKE)));
+    m_manipController.pov(270).whileTrue(new ParallelCommandGroup(new intakeFromFloor(m_intake, m_feeder, m_indexer), new ArmToPosition(m_arm, armPositions.INTAKE))).onFalse(new ArmToPosition(m_arm, armPositions.INTAKE));
 
-    m_manipController.button(5).whileTrue(new RunBackpack(m_backpack, m_feeder));
+    m_manipController.button(5).whileTrue(new RunBackpack(m_backpack, m_indexer));
 
     m_manipController.button(4).whileTrue(new ArmToPosition(m_arm, armPositions.AMP)).onFalse(new ArmToPosition(m_arm, armPositions.AMP));
     //m_manipController.button(4).whileTrue(new ParallelCommandGroup(new ArmToPosition(m_arm, armPositions.POOP), new RunShooter(m_shooter)) );

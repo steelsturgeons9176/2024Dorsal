@@ -27,7 +27,7 @@ public class PodShotB extends Command {
         m_shooter = shooter;
 
         addRequirements(arm);
-        addRequirements(indexer);
+        //addRequirements(indexer);
         addRequirements(shooter);
     }
 

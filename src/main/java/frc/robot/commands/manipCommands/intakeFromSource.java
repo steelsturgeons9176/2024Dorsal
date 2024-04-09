@@ -31,7 +31,7 @@ public class intakeFromSource extends Command {
     @Override
     public void execute()
     {
-        m_shooter.runShooter(-.3);
+        m_shooter.runShooter(-.5);
         m_indexer.RunIndexer(-.1);
         if(m_indexer.DetectColor())
         {

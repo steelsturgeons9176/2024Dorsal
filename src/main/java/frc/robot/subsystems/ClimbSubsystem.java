@@ -38,7 +38,7 @@ public class ClimbSubsystem extends SubsystemBase {
     }
 
     public void runDescend(double speed) {
-        m_leftClimber.set(-speed);
-        m_rightClimber.set(-speed);
+        m_leftClimber.set(speed);
+        m_rightClimber.set(speed);
     }
 }

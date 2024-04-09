@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7272273347965497,
-        "y": 5.53650223579517
+        "x": 1.5916721619666532,
+        "y": 5.820605655463093
       },
       "isLocked": false,
       "linkedName": "pos2"
     },
     {
       "anchor": {
-        "x": 2.45,
-        "y": 6.79
+        "x": 2.5373987090016947,
+        "y": 6.6493351038958615
       },
       "prevControl": {
-        "x": 2.4720439248752593,
-        "y": 6.800279250985127
+        "x": 2.559442633876954,
+        "y": 6.659614354880988
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Gay Paths",
   "previewStartingState": {
     "rotation": 180.0,
     "velocity": 0

@@ -2,24 +2,24 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2945574370576298,
-      "y": 5.53650223579517
+      "x": 0.7921919881844527,
+      "y": 6.668834620329574
     },
-    "rotation": 179.55339010647552
+    "rotation": -122.00538320808354
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "startB-pos2"
+            "name": "SubShotB"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Straight Autos",
   "choreoAuto": false
 }

@@ -3,21 +3,19 @@ package frc.robot.commands.autoCommands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.VisionSubSystem;
 
-public class ArmPositionAuto  extends Command{
-    private ArmSubsystem m_arm;
-    private ArmSubsystem.armPositions m_targetPos;
-    private ShooterSubsystem m_shooter;
-    private boolean m_keepRunning;
-    private boolean reachedTarget = false;
+public class AimVision  extends Command{
     private double m_startTime = 0;
+    DriveSubsystem m_drive;
+    VisionSubSystem m_vision;
 
-    public ArmPositionAuto(ArmSubsystem arm, ArmSubsystem.armPositions pos){
-        m_arm = arm;
-        m_targetPos = pos;
-        m_keepRunning = false;
-        addRequirements(m_arm);
+    public AimVision(DriveSubsystem drive, VisionSubSystem vison){
+        m_drive = drive;
+        m_vision = vison;
+        addRequirements(m_drive);
     }
 
     @Override
@@ -31,13 +29,12 @@ public class ArmPositionAuto  extends Command{
 
     @Override
     public void execute(){
-        m_arm.raiseArmAbs(m_targetPos);
-        reachedTarget = m_arm.atPosition();
+        m_drive.drive(m_vision.limelight_range_proportional(), 0, m_vision.limelight_aim_proportional(), true, true);
     }
 
     @Override
     public boolean isFinished(){
-        if(getTime() >= .02f)
+        if(getTime() >= 1.0f)
         {
             return true;
         }
@@ -46,7 +43,7 @@ public class ArmPositionAuto  extends Command{
 
     @Override
     public void end(boolean isInterrupted){
-        if (!m_keepRunning) m_arm.raiseArmAbs(m_targetPos);
+        m_drive.drive(0,0, 0, true, true);
     }
 }
 

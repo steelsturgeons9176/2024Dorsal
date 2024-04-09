@@ -107,12 +107,18 @@
         {
           "type": "named",
           "data": {
+            "name": "Aim"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "PodShotB"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Gay Autos",
   "choreoAuto": false
 }

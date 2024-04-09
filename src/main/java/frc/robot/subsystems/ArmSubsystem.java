@@ -162,12 +162,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Arm Relative Enc", m_armRight.getEncoder().getPosition());
+        //SmartDashboard.putNumber("Arm Relative Enc", m_armRight.getEncoder().getPosition());
         SmartDashboard.putNumber("ArmABS Absolute", armAbsEncoder.getPosition());
         //SmartDashboard.putNumber("Arm oCurrent", m_armRight.getOutputCurrent());
         //SmartDashboard.putNumber("Arm Motor Speed", m_speed);
-        SmartDashboard.putNumber("LeftMotor", m_armRight.getOutputCurrent());
-        SmartDashboard.putNumber("Right Motor", m_armLeft.getOutputCurrent());
+        //SmartDashboard.putNumber("LeftMotor", m_armRight.getOutputCurrent());
+        //SmartDashboard.putNumber("Right Motor", m_armLeft.getOutputCurrent());
 
         if(isTuning)
         {
@@ -229,7 +229,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         //m_AbsPidController.
 
-        SmartDashboard.putNumber("ff", ff.calculate(setpointState.position, setpointState.velocity));
+        //SmartDashboard.putNumber("ff", ff.calculate(setpointState.position, setpointState.velocity));
 
         m_armRight.set(kS_tuner);
 
@@ -268,7 +268,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         //m_armRight.
             
-        SmartDashboard.putNumber("Arm Abs Target Pos", ref);
+        //SmartDashboard.putNumber("Arm Abs Target Pos", ref);
  //       m_armRight.set(pidOut);
         
         //if(atPosition(position))

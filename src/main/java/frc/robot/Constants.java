@@ -35,6 +35,8 @@ public final class Constants {
     //public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
 
     public static final double kDirectionSlewRate = 3.8; // radians per second
+    public static final double kAutoMagnitudeSlewRate = 1.8;
+    public static final double kAutoDirctionalSlewRate = 1.2;
     public static final double kMagnitudeSlewRate = 15.6; // percent per second (1 = 100%)
     public static final double kRotationalSlewRate = 12.0; // percent per second (1 = 100%)
 
@@ -106,7 +108,7 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 50; // amps
+    public static final int kDrivingMotorCurrentLimit = 30; // amps
     public static final int kTurningMotorCurrentLimit = 15; // amps
   }
 
@@ -117,8 +119,8 @@ public final class Constants {
     public static final double kMinHeightAbs = 0 + kOffset;
     public static final double kMaxHeightAbs = .25 + kOffset;
 
-    public static final double STOWED = (25.0/360.0f) + kOffset; // 0 degrees ~ 0/360 - 0
-    public static final double INTAKE = .05 + kOffset; // 20 degrees ~ 20/360 - 0.0555
+    public static final double STOWED = (10.0/360.0f) + kOffset; // 0 degrees ~ 0/360 - 0
+    public static final double INTAKE = .052 + kOffset; // 20 degrees ~ 20/360 - 0.0555
     public static final double SOURCE = .125 + kOffset; // 45 degrees ~ 90/360 - 0.125
     public static final double SUBSHOT = (53.0f/360.0f) + kOffset; // 60 degrees ~ 60/360 - 0.166
     public static final double PODSHOT = (33.0f/360.0f) + kOffset;

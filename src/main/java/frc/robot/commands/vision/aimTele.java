@@ -21,7 +21,7 @@ public class aimTele extends Command {
     @Override
     public void execute() {
         //m_shooter.runShooter(1);
-        m_DriveSubsystem.drive(0, 0, m_vision.limelight_aim_proportional(), true, true);
+        m_DriveSubsystem.drive(m_vision.limelight_range_proportional(), 0, m_vision.limelight_aim_proportional(), true, true);
     }
 
     @Override

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7629427135388497,
-        "y": 4.436139988667603
+        "x": 7.8217676625377015,
+        "y": 0.7702308991316326
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8841649084773011,
-        "y": 1.2187197771050888
+        "x": 6.690795709382394,
+        "y": 0.7312318662642086
       },
       "isLocked": false,
-      "linkedName": "startC"
+      "linkedName": "pos8Aaim"
     },
     {
       "anchor": {
-        "x": 8.29950581516365,
-        "y": 0.7604811409147759
+        "x": 2.371652819315141,
+        "y": 3.3734163430322113
       },
       "prevControl": {
-        "x": 7.29950581516365,
-        "y": 0.7604811409147759
+        "x": 2.751893389772529,
+        "y": 2.2229448734431907
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "pos8"
+      "linkedName": "pos7Aaim"
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -174.92039213998552,
+    "rotation": 135.67,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Aaim Paths",
   "previewStartingState": {
-    "rotation": 120.762719534239,
+    "rotation": 178.83086067209265,
     "velocity": 0
   },
   "useDefaultConstraints": true

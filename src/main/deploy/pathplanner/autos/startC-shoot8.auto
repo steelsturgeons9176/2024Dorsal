@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7434431971001721,
-      "y": 4.416640472235815
+      "x": 0.7629427135338847,
+      "y": 4.426390230452671
     },
     "rotation": 120.96375653207355
   },
@@ -18,19 +18,13 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.2
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "C-pos8"
+                  "pathName": "C-pos7"
                 }
               },
               {
@@ -51,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pos8-StartC"
+            "pathName": "Pos7-StartC"
           }
         },
         {
@@ -59,10 +53,35 @@
           "data": {
             "name": "SubShotB"
           }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "posR-pos8"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmToPositionIntake"
+                }
+              }
+            ]
+          }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Gay Autos",
   "choreoAuto": false
 }

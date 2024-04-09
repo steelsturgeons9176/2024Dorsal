@@ -14,7 +14,7 @@ public class RunShooter extends Command {
 
     @Override
     public void execute() {
-        m_shooter.runShooter(1);
+        m_shooter.spinShootNote(.9,.8);
     }
 
     @Override

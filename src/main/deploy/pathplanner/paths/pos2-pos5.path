@@ -12,7 +12,7 @@
         "y": 7.783044489165902
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "pos#2"
     },
     {
       "anchor": {
@@ -59,7 +59,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Gay Paths",
   "previewStartingState": {
     "rotation": -178.89829388479373,
     "velocity": 0

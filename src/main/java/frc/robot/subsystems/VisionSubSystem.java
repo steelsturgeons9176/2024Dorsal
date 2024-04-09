@@ -55,5 +55,13 @@ public class VisionSubSystem extends SubsystemBase {
 
     return targetingAngularVelocity;
   }
+  public double limelight_range_proportional()
+  {    
+    double kP = .025;
+    double targetingForwardSpeed = LimelightHelpers.getTY("limelight") * kP;
+    targetingForwardSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+    targetingForwardSpeed *= -1.0;
+    return targetingForwardSpeed;
+  }
     
 }

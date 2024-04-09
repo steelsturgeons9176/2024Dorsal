@@ -1,9 +1,17 @@
 {
-  "robotWidth": 0.9,
-  "robotLength": 0.9,
+  "robotWidth": 0.81,
+  "robotLength": 0.91,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "Aaim Paths",
+    "Gay Paths",
+    "Straight Paths"
+  ],
+  "autoFolders": [
+    "Gay Autos",
+    "Aaim Autos",
+    "Straight Autos"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

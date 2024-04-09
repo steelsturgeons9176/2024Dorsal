@@ -3,72 +3,72 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.8995380584081407,
-        "y": 6.999675138839473
+        "x": 2.7272273347965497,
+        "y": 5.53650223579517
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8995380584081407,
-        "y": 7.015803422569517
+        "x": 2.863723949832535,
+        "y": 6.053239421288542
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "pos2"
     },
     {
       "anchor": {
-        "x": 2.8995380584081407,
-        "y": 6.69323774796862
+        "x": 2.9078895212422267,
+        "y": 6.756582444281278
       },
       "prevControl": {
-        "x": 2.8995380584081407,
-        "y": 7.0611642205602685
+        "x": 3.0568638358179343,
+        "y": 6.636173231966417
       },
       "nextControl": {
-        "x": 2.8995380584081407,
-        "y": 6.325311275376972
+        "x": 2.758915206666519,
+        "y": 6.8769916565961395
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.8995380584081407,
-        "y": 5.548129603135434
+        "x": 2.5373987090016947,
+        "y": 6.6493351038958615
       },
       "prevControl": {
-        "x": 2.8995380584081407,
-        "y": 5.548129603135434
+        "x": 2.6348962911702563,
+        "y": 6.737082927847567
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "pos1"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 90.0,
-      "rotateFast": false
+      "rotationDegrees": -89.01223960036013,
+      "rotateFast": true
     }
   ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0,
+    "rotation": -155.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Gay Paths",
+  "folder": "Straight Paths",
   "previewStartingState": {
-    "rotation": -151.69924423399357,
+    "rotation": 177.754257434105,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

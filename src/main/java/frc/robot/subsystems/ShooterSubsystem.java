@@ -141,6 +141,12 @@ private final VelocityTorqueCurrentFOC velocityControl =
         m_shooterRight.set(speed);
     }
 
+    public void spinShootNote(double rightSpeed, double leftSpeed)
+    {
+      m_shooterLeft.set(leftSpeed);
+      m_shooterRight.set(rightSpeed);
+    }
+
     private void setGoal(Goal goal) {
         if (goal == Goal.CHARACTERIZING || goal == Goal.STOP) {
             wasClosedLoop = closedLoop;
