@@ -151,34 +151,6 @@ public class RobotContainer {
     //return new PathPlannerAuto("startB-shoot2");
   }
 
-  public final void shootNote() {
-    new RunShooter(m_shooter);
-    new RunIndexerShooter(m_indexer);
-  }
-
-  public final void intakeNode() {
-    new ArmToPosition(m_arm, ArmSubsystem.armPositions.INTAKE);
-
-    new RunIntake(m_intake);
-    new RunIndexerShooter(m_indexer);
-    new RunFeeder(m_feeder);
-  }
-
-  public final void ampBackpack() {
-    new ArmToPosition(m_arm, ArmSubsystem.armPositions.AMP);
-
-    new RunFeeder(m_feeder);
-    //new RunBackpack(m_backpack);
-  }
-
-  public final void climb() {
-    new RunClimb(m_climb);
-  }
-
-  public final void descend() {
-    new RunDescend(m_climb);
-  }
-
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by
