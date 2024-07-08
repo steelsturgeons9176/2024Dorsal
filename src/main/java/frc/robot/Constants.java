@@ -123,7 +123,8 @@ public final class Constants {
     public static final double INTAKE = 0.0472 + kOffset; // 17 degrees ~ 17/360 - 0.0472
     public static final double SOURCE = .125 + kOffset; // 45 degrees ~ 90/360 - 0.125
     public static final double SUBSHOT = (53.0f/360.0f) + kOffset; // 60 degrees ~ 60/360 - 0.166
-    public static final double PODSHOT = (33.0f/360.0f) + kOffset;
+    public static final double PODSHOT = (33.0f/360.0f) + kOffset; //TODO: revert back to 33.0f
+    public static final double LONGSHOT = (26.25f/360.0f) + kOffset;
     public static final double AMP = .25 + kOffset; // 90 degrees ~ 90/360 - 0.25
     public static final double POOP = (7.0f/360.0f) + kOffset;
 
