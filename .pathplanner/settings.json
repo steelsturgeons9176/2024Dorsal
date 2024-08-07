@@ -3,13 +3,13 @@
   "robotLength": 0.91,
   "holonomicMode": true,
   "pathFolders": [
-    "Aaim Paths",
-    "Gay Paths",
+    "Aim Paths",
+    "Tested Paths",
     "Straight Paths"
   ],
   "autoFolders": [
-    "Gay Autos",
-    "Aaim Autos",
+    "TestedAutos",
+    "Aim Autos",
     "Straight Autos"
   ],
   "defaultMaxVel": 3.0,
